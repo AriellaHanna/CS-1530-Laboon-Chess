@@ -1,0 +1,31 @@
+NOTE: These are not prioritized yet
+
+Chess game vs computer
+Follows the rules
+Must have GUI
+Low priority: difficulty modes
+American chess
+Medium priority: set time limit
+2D is fine
+High priority: multiple save and load game states
+Low priority: undo move
+Option to play again
+Low priority: hint system, suggest a move
+Medium priority: tutorial
+No illegal moves allowed with notification
+Choose black or white
+Max time for AI to move: 10s
+Save to text vile - pgn
+Click on piece then click location
+Exit program and ask if you want to save
+Buttons under the board
+Name: Laboon Chess
+Medium priority: Taken pieces show up on side
+Black always on top, white always on bottom
+Grid coordinates on outlines
+Low priority: past moves
+Indication of whose turn it is
+Medium priority: confirm move button
+Say what error is if any should occur
+
+Note: Look for open source chess engines, stockfish
