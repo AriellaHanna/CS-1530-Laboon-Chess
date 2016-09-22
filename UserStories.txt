@@ -1,0 +1,90 @@
+User Stories
+
+1.
+	As a user, I want a chess game that follows the rules of American chess, so that I can
+	play the game in the standard way that one would expect.
+
+2.
+	As a user, I want to be notified when I attempt an illegal move, so that I know it is
+	not an error with the program.
+	
+3.
+	As a user, I want a GUI, so that I can see the board and moves on screen.
+	
+4.
+	As a user, I want an indication of whose turn it is, so that I can see when it is my
+	turn to go.
+5.
+	As a user, I want black to always be on top and white to always be on bottom because
+	that is my preferred way to view the board.
+	
+6.
+	As a user, I want gird coordinates on the outlines, so that I can gain familiarity with
+	algebraic notation of chess.
+	
+7.
+	As a user, I want the option to play again, so that I don't have to restart the program
+	to start a new game.
+	
+8.
+	As a user, I want a descriptive error message if the program should crash, so that
+	I attempt to avoid that scenario in the future.
+	
+9.
+	As a user, I want to be able to choose between black or white, so that I can choose
+	if I want to move first or second.
+	
+10.
+	As a user, I want to make moves by clicking on my piece and then the location, so that
+	I can move the pieces in a way that is close to how I would move them in real life.
+
+11.
+	As a user, I want the AI to take no more than 10 seconds to choose a move because I
+	would like to spend more time playing than waiting on the AI.
+	
+12.
+	As a user, I want the option to exit and save the game, so that I can come back to games
+	I was unable to finish.
+	
+13.
+	As a user, I want buttons under the board to exit and save the game because that is
+	a simple and fast way to save and quit.
+	
+14.
+	As a developer, I want the game to save as a PGN text file because that is the standard.
+	
+15.
+	As a user, I want multiple save and load game states so that I can save more than one
+	game at a time.
+
+16.
+	As a user, I want the option to set a time limit, so that I can play with a time limit
+
+17.
+	As a user, I want the option to confirm a move before it's final, so that I can change
+	my mind if I make a bad move or undo an accidental click.
+	
+18.
+	As a user, I want taken pieces to show up on the side, so that I can see the pieces I've
+	captured and the pieces my opponent has captured.
+	
+19.
+	As a user, I want a tutorial, so that I can learn how to play the game without needing
+	an outside source.
+	
+20.
+	As a user, I want the ability to undo my most recent move, so that I can undo accidental
+	clicks or go back if I made a bad move.
+	
+21.
+	As a user, I want past moves to display on the side of the board, so that I can see a 
+	record of how the game went.
+	
+22.
+	As a user, I want a hint system, so that I can see if the move I was planning is a good
+	idea or to get help when I'm stuck.
+	
+23.
+	As a user, I want different difficulty setting, so that I can choose the level of my
+	opponent.
+	
