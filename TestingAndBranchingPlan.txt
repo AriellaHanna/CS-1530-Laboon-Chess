@@ -1,40 +1,15 @@
 Test Plan:
 
-	One of the biggest aspects of the game which will need testing, is whether or not
-the game follows the correct rules. In this case, chess must follow the rules of 
-American chess. This means all pieces should only be able to make the appropriate moves.
-In case, the user attempts an illegal move for a piece, they should be informed as such
-and prevented from doing so. Included with the rules, is the ability to take the opponents
-pieces. Testing will be necessary to ensure that only the opponents pieces can be taken
-and not accidently take your own. These tests are necessary to ensure that rules of the 
-game are set, followed by the user, and every user is on the same page. 
+	One of the biggest aspects of the game which will need testing, is whether or not the game follows the correct rules. In this case, chess must follow the rules of American chess. This means all pieces should only be able to make the appropriate moves. If the user attempts an illegal move for a piece, they should be informed as such and prevented from doing so. Included with the rules is also the ability to take the opponents pieces. Testing will be necessary to ensure that only the opponents pieces can be taken and not accidently take your own. These tests are necessary to guarantee that rules of the game are set, followed by the user, and every user is on the same page. 
 
-	Another aspect needing testing is the GUI itself. All buttons should perform the 
-appropriate functions (i.e. Exit should exit the progam, and New Game should start a new
-game). This also includes the correct placement of the pieces based on the user's mouse 
-click. This specific testing will be required in order to allow the user to reliablely 
-play the game without any frustrations. 
+	Another aspect needing testing is the GUI itself. All buttons should perform the appropriate functions (i.e. Exit should exit the program, and New Game should start a new game). This also includes the correct placement of the pieces based on the user's mouse click. This specific testing will be required in order to allow the user to reliably play the game without any frustrations. 
 
-	Though the save function will be a part of the GUI, as it will be a button, it must
-also be tested separately. The intended goal of saving is to create a PGN which will be 
-stored for later use. Therefore we will need to test whether the correct game state is 
-saved and when loaded, the board is setup correctly. This is key for the user when they 
-wish to continue a game that was started earlier. This feature also adds to the reliability
-of the game which is key to keep the user comming back. 
+	Though the save function will be a part of the GUI, as it will be a button, it must also be tested separately. The intended goal of saving is to create a PGN which will be stored for later use. Therefore we will need to test whether the correct game state is saved and when loaded, the board is setup correctly. This is key for the user when they wish to continue a game that was started earlier. This feature also adds to the reliability of the game which is key to keep the user coming back. 
 
-	Other fuctionalities will need to be tested too. These include undoing a move, producing
-a hint, and displaying past moves. Undo needs to be tested to ensure the piece is restored to
-correct position. Displaying past moves must correctly show moves which were performed in the
-past. Lastly for the hints given must put the user in a position which results in an immediate
-check, checkmate, or loss of a piece. If the hint were to give bad advice then the user would
-lose faith in the hints and the game. 
+	Other functionalities will need to be tested too. These include undoing a move, producing a hint, and displaying past moves. Undo needs to be tested to ensure the piece is restored to correct position. Displaying past moves must correctly show moves which were performed in the past. Lastly for the hints given must put the user in a position which results in an immediate check, checkmate, or loss of a piece. If the hint were to give bad advice then the user would lose faith in the hints and the game. 
+
+
 
 Branching Plan:
 
-	Our branching plan will fist consist of individual branches for each member of the team and
-will be named as such. From there each new branch will be determined for each major piece of the 
-project. This means we will have branches such as GUI branch, a controller banch, and maybe a model
-branch. With all this branches we will need to have someone oversee the integration of them. This 
-will be a job for the sprint's Scrum Master. Hopefully this help prevent any code which could 
-essentially break the program. Note this branching/integration plan may be changed as the sprints
-continue. 
+	Our branching plan will fist consist of individual branches for each member of the team and will be named as such. From there each new branch will be determined for each major piece of the project. This means we will have branches such as GUI branch, a controller branch, and maybe a model branch. With all this branches we will need to have someone oversee the integration of them. This will be a job for the sprint's Scrum Master. Hopefully this help prevent any code which could essentially break the program. Note this branching/integration plan may be changed as the sprints continue.
