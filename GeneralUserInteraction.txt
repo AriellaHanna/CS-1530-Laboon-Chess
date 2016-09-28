@@ -1,0 +1,9 @@
+General User Interaction with Laboon Chess:
+
+The user will first launch the chess game from where ever they have it stored on their computer. Upon launching the game,
+the user will be presented with the game screen and a pop-up screen that asks them whether they would like to be white
+or black. Next the user will be taken to the game screen and will be able to play by clicking on their pieces and moving
+them to valid spaces on the board, per American chess rules. The user will be alerted if they try to make an invalid move.
+Should the user want to start over, they will be able to press the "New Game" button at the bottom of the screen. 
+If they would like to save a game or load a previous game, the user will be able to press the "Save Game" or "Load Game"
+buttons, respectively.
