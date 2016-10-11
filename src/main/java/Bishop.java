@@ -6,7 +6,7 @@ public class Bishop extends Piece {
 	}
 	
 	public boolean move(int h, int v) {
-		if (h-x == v - y)
+		if (h-getX() == v - getY())
 			return true;
 		else
 			return false;

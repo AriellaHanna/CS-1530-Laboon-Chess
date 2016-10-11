@@ -7,7 +7,7 @@ public class Rook extends Piece {
 	
 	public boolean move(int h, int v) {
 		//Moving horizontally or vertically
-		if (xor(x == h, y == v))
+		if (xor(getX() == h, getY() == v))
 			return true;
 		else
 			return false;

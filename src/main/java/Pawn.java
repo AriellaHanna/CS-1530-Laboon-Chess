@@ -8,21 +8,21 @@ public class Pawn extends Piece {
 	
 	public boolean move(int h, int v) {
 		//Move diagonally
-		if (abs(h,x) == 1 && abs(v,y) == 1)
+		if (abs(h,getX()) == 1 && abs(v,getY()) == 1)
 			return true;
 		//Pawn can move two spaces
 		else if (!getMoved()){
-			if (h == x && (abs(v,y) == 1 || abs(v,y) == 2))
-			{
+			if (h == getX() && (abs(v,getY()) == 1 || abs(v,getY()) == 2)){
 				setMoved(true);
 				return true;
 			}
 		}
 		//Pawn can only move one space forward
-		else if (h == x && (abs(v,y) == 1))
+		else if (h == getX() && (abs(v,getY()) == 1))
 			return true;
 		else
 			return false;
+		return false;
 	}
 	
 	public void setMoved(boolean status){

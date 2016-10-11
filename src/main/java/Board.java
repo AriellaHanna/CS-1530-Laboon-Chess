@@ -19,7 +19,7 @@ public class Board {
 		spaces[7][0].add(new Rook(true,7,0));
 		spaces[1][0].add(new Knight(true,1,0));
 		spaces[6][0].add(new Knight(true,6,0));
-		spaces[2][0].add(new Bishop(true,2,0);
+		spaces[2][0].add(new Bishop(true,2,0));
 		spaces[5][0].add(new Bishop(true,5,0));
 		spaces[3][0].add(new Queen(true,3,0));
 		spaces[4][0].add(new King(true,4,0));
@@ -33,7 +33,7 @@ public class Board {
 		spaces[7][7].add(new Rook(false,7,0));
 		spaces[1][7].add(new Knight(false,1,0));
 		spaces[6][7].add(new Knight(false,6,0));
-		spaces[2][7].add(new Bishop(false,2,0);
+		spaces[2][7].add(new Bishop(false,2,0));
 		spaces[5][7].add(new Bishop(false,5,0));
 		spaces[3][7].add(new Queen(false,3,0));
 		spaces[4][7].add(new King(false,4,0));

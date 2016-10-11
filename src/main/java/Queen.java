@@ -6,11 +6,11 @@ public class Queen extends Piece {
 	}
 	
 	public boolean move(int h, int v) {
-		//Moving horizontally or vertically
-		if (xor(x == h, y == v))
+		//Moving horizontallgetY() or verticallgetY()
+		if (xor(getX() == h, getY() == v))
 			return true;
-		//Moving diagonally
-		else if (h-x == v - y)
+		//Moving diagonallgetY()
+		else if (h-getX() == v - getY())
 		{
 			return true;
 		}
