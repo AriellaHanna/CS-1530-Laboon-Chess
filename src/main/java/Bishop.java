@@ -6,14 +6,7 @@ public class Bishop extends Piece {
 	}
 	
 	public boolean move(int h, int v) {
-		if (h-getX() == v - getY())
-			return true;
-		else
-			return false;
+		return (Math.abs(h-getX()) == Math.abs(v-getY()));
 	}
-	
-	//Logical XOR
-	private boolean xor(boolean a, boolean b) {
-		return (a && !b) || (b && !a);
-	}
+
 }

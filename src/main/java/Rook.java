@@ -7,14 +7,6 @@ public class Rook extends Piece {
 	
 	public boolean move(int h, int v) {
 		//Moving horizontally or vertically
-		if (xor(getX() == h, getY() == v))
-			return true;
-		else
-			return false;
-	}
-	
-	//Logical XOR
-	private boolean xor(boolean a, boolean b) {
-		return (a && !b) || (b && !a);
+		return (getX() == h ^ getY() == v);
 	}
 }

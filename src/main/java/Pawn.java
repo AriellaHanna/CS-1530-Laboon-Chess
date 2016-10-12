@@ -6,23 +6,46 @@ public class Pawn extends Piece {
 		hasMoved = false;
 	}
 	
+	//Move the pawn
 	public boolean move(int h, int v) {
-		//Move diagonally
-		if (abs(h,getX()) == 1 && abs(v,getY()) == 1)
-			return true;
-		//Pawn can move two spaces
-		else if (!getMoved()){
-			if (h == getX() && (abs(v,getY()) == 1 || abs(v,getY()) == 2)){
-				setMoved(true);
-				return true;
-			}
-		}
-		//Pawn can only move one space forward
-		else if (h == getX() && (abs(v,getY()) == 1))
-			return true;
+		if (h != getX())
+			return capture(h,v);
+		else if (isWhite())
+			return whiteMove(h,v);
 		else
-			return false;
-		return false;
+			return blackMove(h,v);
+	}
+	
+	//Capture a piece/move diagonally
+	private boolean capture(int h, int v){
+		if (isWhite())
+			return (h-getX() == 1 && v-getY() == 1);
+		else
+			return (getX()-h == 1 && getY()-v == 1);
+	}
+	
+	//Movement of white Pawn
+	private boolean whiteMove(int h, int v){
+		//First move, can move two spaces
+		if (!getMoved()){
+			setMoved(true);
+			return (v-getY() <= 2 && v > getY());
+		}
+		//Not first move, can only move one
+		else
+			return v-getY() == 1;
+	}
+	
+	//Movement of black pawn
+	private boolean blackMove(int h, int v){
+		//First move, can move one or two
+		if (!getMoved()){
+			setMoved(true);
+			return (getY()-v <= 2 && v < getY());
+		}
+		//Not first move, can only move one
+		else
+			return getY()-v == 1;
 	}
 	
 	public void setMoved(boolean status){
@@ -31,18 +54,5 @@ public class Pawn extends Piece {
 	
 	public boolean getMoved(){
 		return hasMoved;
-	}
-	
-	//Logical XOR
-	private boolean xor(boolean a, boolean b) {
-		return (a && !b) || (b && !a);
-	}
-	
-	//Find absolute value of a-b
-	private int abs(int a, int b) {
-		if (a - b > 0)
-			return a - b;
-		else
-			return (a-b)*-1;
 	}
 }

@@ -5,21 +5,20 @@ public class Queen extends Piece {
 		super(color, hori, vert);
 	}
 	
+	//Move queen
 	public boolean move(int h, int v) {
-		//Moving horizontallgetY() or verticallgetY()
-		if (xor(getX() == h, getY() == v))
-			return true;
-		//Moving diagonallgetY()
-		else if (h-getX() == v - getY())
-		{
-			return true;
-		}
-		else
-			return false;
+		//Return true if piece can move diagonal or straight
+		return moveDiagonal(h,v) || moveStraight(h,v);
 	}
 	
-	//Logical XOR
-	private boolean xor(boolean a, boolean b) {
-		return (a && !b) || (b && !a);
+	//Check if diagonal movement
+	private boolean moveDiagonal(int h, int v) {
+		return (Math.abs(h-getX()) == Math.abs(v-getY()));
 	}
+	
+	//Check if straight movement
+	private boolean moveStraight(int h, int v){
+		return (getX() == h ^ getY() == v);
+	}
+
 }

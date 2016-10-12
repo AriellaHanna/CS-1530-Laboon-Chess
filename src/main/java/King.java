@@ -6,18 +6,7 @@ public class King extends Piece {
 	}
 	
 	public boolean move(int h, int v) {
-		//Make sure King is only trying to move one space
-		if (abs(h,getX()) <= 1 && abs(v,getY()) <=1)
-			return true;
-		else
-			return false;
-	}
-	
-	//Find absolute value of a-b
-	private int abs(int a, int b) {
-		if (a - b > 0)
-			return a - b;
-		else
-			return (a-b)*-1;
+		//Make sure King is moving exactly one space
+		return ((Math.abs(h-getX()) <= 1) && (Math.abs(v-getY()) <=1) && !(h == getX() && v == getY()));
 	}
 }
