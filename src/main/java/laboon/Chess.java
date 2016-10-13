@@ -45,7 +45,6 @@ public class Chess {
 		frame = new JFrame("Laboon Chess");	//creates the JFrame
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(800, 600);
-		frame.setVisible(true);
 		ButtonListener = new Control();
 		theButtons = new JButton[game][game];	//creates the game buttons
 		newGame = new JButton("New Game");	//creates a new game button
@@ -83,6 +82,8 @@ public class Chess {
         frame.add(upperPanel, BorderLayout.NORTH);
 		frame.add(middlePanel, BorderLayout.CENTER);	//adds the one JLabel to the JFrame and puts it in the center of the GUI
 		frame.add(lowerPanel, BorderLayout.SOUTH);	//adds the other JLabel to the JFrame and puts it in the southern part of the GUI
+
+		frame.setVisible(true);
 	} 
 
 	private class Control implements ActionListener
