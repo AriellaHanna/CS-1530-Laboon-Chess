@@ -1,3 +1,4 @@
+package laboon;
 public class Pawn extends Piece {
 	private boolean hasMoved; //Whether or not pawn has moved yet
 	//Constructor

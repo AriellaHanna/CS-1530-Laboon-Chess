@@ -1,3 +1,4 @@
+package laboon;
 public class Space {
 	private int x;
 	private int y;

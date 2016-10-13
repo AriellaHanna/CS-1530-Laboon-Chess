@@ -1,3 +1,5 @@
+package laboon;
+
 public class Bishop extends Piece {
 	
 	//Constructor

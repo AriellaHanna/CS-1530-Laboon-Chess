@@ -1,3 +1,4 @@
+package laboon;
 public class Board {
 	private Space[][] spaces = new Space[8][8]; //Array of all spaces on the board
 	

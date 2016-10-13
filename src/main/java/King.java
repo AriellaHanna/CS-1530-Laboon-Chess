@@ -1,3 +1,4 @@
+package laboon;
 public class King extends Piece {
 	
 	//Constructor

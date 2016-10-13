@@ -23,6 +23,13 @@ public class Chess {
 	private int t;
 	private boolean win = false;
 	private boolean test;    
+	
+	protected static Bishop bishop = new Bishop(true,4,4);
+	protected static King king = new King(true,4,4);
+	protected static Queen queen = new Queen(true,4,4);
+	protected static Knight knight = new Knight(true,4,4);
+	protected static Pawn pawn = new Pawn(true,4,4);
+	protected static Rook rook = new Rook(true,4,4);
 
     public static void main(String[] args) {
         new Chess(8);
@@ -38,10 +45,7 @@ public class Chess {
 		frame = new JFrame("Laboon Chess");	//creates the JFrame
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(800, 600);
-<<<<<<< HEAD
-=======
 		frame.setVisible(true);
->>>>>>> 60cd2eb5c1e779ce0bafcb2fe2b88e9f37c383c1
 		ButtonListener = new Control();
 		theButtons = new JButton[game][game];	//creates the game buttons
 		newGame = new JButton("New Game");	//creates a new game button
@@ -79,10 +83,6 @@ public class Chess {
         frame.add(upperPanel, BorderLayout.NORTH);
 		frame.add(middlePanel, BorderLayout.CENTER);	//adds the one JLabel to the JFrame and puts it in the center of the GUI
 		frame.add(lowerPanel, BorderLayout.SOUTH);	//adds the other JLabel to the JFrame and puts it in the southern part of the GUI
-<<<<<<< HEAD
-		frame.setVisible(true);
-=======
->>>>>>> 60cd2eb5c1e779ce0bafcb2fe2b88e9f37c383c1
 	} 
 
 	private class Control implements ActionListener
