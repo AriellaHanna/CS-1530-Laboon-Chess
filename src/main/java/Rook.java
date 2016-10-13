@@ -1,3 +1,4 @@
+package laboon;
 public class Rook extends Piece {
 
 	//Constructor

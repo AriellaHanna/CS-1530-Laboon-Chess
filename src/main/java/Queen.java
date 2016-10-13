@@ -1,3 +1,4 @@
+package laboon;
 public class Queen extends Piece {
 	
 	//Constructor

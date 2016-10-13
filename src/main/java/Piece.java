@@ -1,3 +1,4 @@
+package laboon;
 public class Piece {
 	private boolean taken; //True if piece has been captured, false otherwise
 	private boolean white; //True if white, false if black
