@@ -17,29 +17,29 @@ public class Board {
 	//Adds all white pieces
 	private void addWhites() {
 		spaces[0][0].add(new Rook(true,0,0));
-		spaces[7][0].add(new Rook(true,7,0));
-		spaces[1][0].add(new Knight(true,1,0));
-		spaces[6][0].add(new Knight(true,6,0));
-		spaces[2][0].add(new Bishop(true,2,0));
-		spaces[5][0].add(new Bishop(true,5,0));
-		spaces[3][0].add(new Queen(true,3,0));
-		spaces[4][0].add(new King(true,4,0));
+		spaces[0][7].add(new Rook(true,0,7));
+		spaces[0][1].add(new Knight(true,0,1));
+		spaces[0][6].add(new Knight(true,0,6));
+		spaces[0][2].add(new Bishop(true,0,2));
+		spaces[0][5].add(new Bishop(true,0,5));
+		spaces[0][3].add(new Queen(true,0,3));
+		spaces[0][4].add(new King(true,0,4));
 		for (int i = 0; i < 8; i++)
-			spaces[i][1].add(new Pawn(true,i,1));
+			spaces[1][i].add(new Pawn(true,1,i));
 	}
 	
 	//Adds all black pieces
 	private void addBlacks() {
-		spaces[0][7].add(new Rook(false,0,0));
-		spaces[7][7].add(new Rook(false,7,0));
-		spaces[1][7].add(new Knight(false,1,0));
-		spaces[6][7].add(new Knight(false,6,0));
-		spaces[2][7].add(new Bishop(false,2,0));
-		spaces[5][7].add(new Bishop(false,5,0));
-		spaces[3][7].add(new Queen(false,3,0));
-		spaces[4][7].add(new King(false,4,0));
+		spaces[7][0].add(new Rook(false,7,0));
+		spaces[7][7].add(new Rook(false,7,7));
+		spaces[7][1].add(new Knight(false,7,1));
+		spaces[7][6].add(new Knight(false,7,6));
+		spaces[7][2].add(new Bishop(false,7,2));
+		spaces[7][5].add(new Bishop(false,7,5));
+		spaces[7][3].add(new Queen(false,7,3));
+		spaces[7][4].add(new King(false,7,4));
 		for (int i = 0; i < 8; i++)
-			spaces[i][6].add(new Pawn(false,i,6));
+			spaces[6][i].add(new Pawn(false,6,i));
 	}
 	
 	//Return a space
