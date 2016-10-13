@@ -5,8 +5,9 @@ public class Pawn extends Piece {
 	public Pawn(boolean color, int hori, int vert) {
 		super(color, hori, vert);
 		hasMoved = false;
+		symbol = color ? "P" : "p";
 	}
-	
+
 	//Move the pawn
 	public boolean move(int h, int v) {
 		if (h != getX())
@@ -16,7 +17,7 @@ public class Pawn extends Piece {
 		else
 			return blackMove(h,v);
 	}
-	
+
 	//Capture a piece/move diagonally
 	private boolean capture(int h, int v){
 		if (isWhite())
@@ -24,7 +25,7 @@ public class Pawn extends Piece {
 		else
 			return (getX()-h == 1 && getY()-v == 1);
 	}
-	
+
 	//Movement of white Pawn
 	private boolean whiteMove(int h, int v){
 		//First move, can move two spaces
@@ -36,7 +37,7 @@ public class Pawn extends Piece {
 		else
 			return v-getY() == 1;
 	}
-	
+
 	//Movement of black pawn
 	private boolean blackMove(int h, int v){
 		//First move, can move one or two
@@ -48,11 +49,11 @@ public class Pawn extends Piece {
 		else
 			return getY()-v == 1;
 	}
-	
+
 	public void setMoved(boolean status){
 		hasMoved = status;
 	}
-	
+
 	public boolean getMoved(){
 		return hasMoved;
 	}

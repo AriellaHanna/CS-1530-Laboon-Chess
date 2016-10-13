@@ -1,11 +1,12 @@
 package laboon;
 public class Knight extends Piece {
-	
+
 	//Constructor
 	public Knight(boolean color, int hori, int vert) {
 		super(color, hori, vert);
+		symbol = color ? "N" : "n";
 	}
-	
+
 	//Knight movement
 	public boolean move(int h, int v) {
 		// Knight can move horizontal two and vertical one or vice verse

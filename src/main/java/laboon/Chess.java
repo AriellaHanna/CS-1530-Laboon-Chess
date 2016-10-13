@@ -22,8 +22,9 @@ public class Chess {
 	private int game;
 	private int t;
 	private boolean win = false;
-	private boolean test;    
-	
+	private boolean test;
+    private Board board;
+
 	protected static Bishop bishop = new Bishop(true,4,4);
 	protected static King king = new King(true,4,4);
 	protected static Queen queen = new Queen(true,4,4);
@@ -57,23 +58,25 @@ public class Chess {
         upperPanel = new JPanel();
 		middlePanel = new JPanel();	//creates a JPanel
 		lowerPanel = new JPanel();	//creates another JPanel
-		
+
         upperPanel.setLayout(new GridLayout());
         upperPanel.add(title);
 
 		middlePanel.setLayout(new GridLayout(game, game));	//Sets the way the components that will be added will be displayed
 		lowerPanel.setLayout(new FlowLayout(game));	//See comment in the line above
-		
+
+        board = new Board();
 		for (int i = 0; i < theButtons.length; i++)	//these two for loops add the JButtons for the game into the JPanel
 		{
 			for (int j = 0; j < theButtons[i].length; j++)
 			{
-				theButtons[i][j] = new JButton(" ");
+                Piece p = board.getSpace(i,j).getPiece();
+				theButtons[i][j] = new JButton(p == null ? " " : p.getSymbol());
 				theButtons[i][j].addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
 				middlePanel.add(theButtons[i][j]);
 			}
 		}
-		
+
 		newGame.addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
 		//undo.addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
 		lowerPanel.add(newGame);	//adds new game button to the panel
@@ -84,7 +87,7 @@ public class Chess {
 		frame.add(lowerPanel, BorderLayout.SOUTH);	//adds the other JLabel to the JFrame and puts it in the southern part of the GUI
 
 		frame.setVisible(true);
-	} 
+	}
 
 	private class Control implements ActionListener
 	{
@@ -94,41 +97,42 @@ public class Chess {
 			{
 				undo.setEnabled(false);	//undo cannot be clicked
 				t=0;	//number of turns is 0
-				
+
 				for(int i=0; i<game; i++)	//these for loops reset the game buttons to empty strings and allow them to be clicked again
 				{
 					for(int j=0; j<game; j++)
 					{
-						theButtons[i][j].setText(" ");
+                        Piece p = board.getSpace(i,j).getPiece();
+						theButtons[i][j].setText(p == null ? " " : p.getSymbol());
 						theButtons[i][j].setEnabled(true);
 					}
 				}
-				
+
 				display.setText("White is up first!");	//tells the user who is up first
 			}
-			
+
 			// else if(e.getSource() == undo)	//when undo is clicked
 			// {
 			// 	boolean not = !test;
 			// 	reset.setText(" ");	//button that was just pressed is reset to an empty string
 			// 	reset.setEnabled(true); //button allowed to be re-clicked
 			// 	t--;	//turns decreased by 1
-				
+
 			// 	if(test)	//if it was just X's turn, they will go again
 			// 	{
 			// 		test = not;
 			// 		display.setText("It's X's turn again.");
 			// 		t--;
-					
+
 			// 	}
-				
+
 			// 	else	//if it was just O's turn, they will go again
 			// 	{
 			// 		test = not;
 			// 		display.setText("It's O's turn again.");
 			// 		t--;
-			// 	}	
+			// 	}
 			// }
 		}
-	}    
+	}
 }
