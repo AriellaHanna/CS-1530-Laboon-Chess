@@ -2,22 +2,24 @@ package laboon;
 
 import java.util.*;
 import java.text.*;
+import java.io.*;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.undo.*;
 
 public class Chess {
-
 	private JFrame frame;	//global variables
     private JPanel upperPanel;
 	private JPanel middlePanel;
 	private JPanel lowerPanel;
 	private JLabel display, title;
 	private JButton [][] theButtons;
+	private JLabel [] numbers;
+	private JLabel [] letters;
 	private JButton newGame;
-	private JButton reset;
-	private JButton undo;
+	private JButton loadGame;
+	private JButton saveGame;
 	private Control ButtonListener;
 	private int game;
 	private int t;
@@ -36,10 +38,6 @@ public class Chess {
         new Chess(8);
     }
 
-    public static String poodle() {
-        return "poodle";
-    }
-
 	public Chess(int size)
 	{
 		game = size;
@@ -47,10 +45,31 @@ public class Chess {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(800, 600);
 		ButtonListener = new Control();
+
+		//creates all positions for the board
+		numbers = new JLabel[8];
+		numbers[0] = new JLabel("8", JLabel.CENTER);
+		numbers[1] = new JLabel("7", JLabel.CENTER);
+		numbers[2] = new JLabel("6", JLabel.CENTER);
+		numbers[3] = new JLabel("5", JLabel.CENTER);
+		numbers[4] = new JLabel("4", JLabel.CENTER);
+		numbers[5] = new JLabel("3", JLabel.CENTER);
+		numbers[6] = new JLabel("2", JLabel.CENTER);
+		numbers[7] = new JLabel("1", JLabel.CENTER);
+		letters = new JLabel[9];
+		letters[0] = new JLabel("", JLabel.CENTER);
+		letters[1] = new JLabel("A", JLabel.CENTER);
+		letters[2] = new JLabel("B", JLabel.CENTER);
+		letters[3] = new JLabel("C", JLabel.CENTER);
+		letters[4] = new JLabel("D", JLabel.CENTER);
+		letters[5] = new JLabel("E", JLabel.CENTER);
+		letters[6] = new JLabel("F", JLabel.CENTER);
+		letters[7] = new JLabel("G", JLabel.CENTER);
+		letters[8] = new JLabel("H", JLabel.CENTER);
 		theButtons = new JButton[game][game];	//creates the game buttons
 		newGame = new JButton("New Game");	//creates a new game button
-		//undo = new JButton("Undo");	//creates an undo button so the player can undo their move if they choose
-		//undo.setEnabled(false);
+		loadGame = new JButton("Load Game"); //loads an existing game
+		saveGame = new JButton("Save Game"); //saves current game
         title = new JLabel("", JLabel.CENTER);
 		display = new JLabel();	//creates a JLabel that will be altered throughout the game telling the user who is up
         title.setText("Laboon Chess");
@@ -62,25 +81,81 @@ public class Chess {
         upperPanel.setLayout(new GridLayout());
         upperPanel.add(title);
 
-		middlePanel.setLayout(new GridLayout(game, game));	//Sets the way the components that will be added will be displayed
+		middlePanel.setLayout(new GridLayout(0, 9));	//Sets the way the components that will be added will be displayed
 		lowerPanel.setLayout(new FlowLayout(game));	//See comment in the line above
+		middlePanel.add(numbers[0]);
 
         board = new Board();
-		for (int i = 0; i < theButtons.length; i++)	//these two for loops add the JButtons for the game into the JPanel
+		
+		int i = 0;
+		int a = 1;
+
+		while(a < 9) 
 		{
 			for (int j = 0; j < theButtons[i].length; j++)
 			{
                 Piece p = board.getSpace(i,j).getPiece();
 				theButtons[i][j] = new JButton(p == null ? " " : p.getSymbol());
 				theButtons[i][j].addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
+
+						if (i == 0 || i == 1) 
+						{
+							theButtons[i][j].setForeground(Color.BLACK);
+						}
+
+						else if (i == 6 || i == 7) 
+						{
+							theButtons[i][j].setForeground(Color.WHITE);
+						}				
+
+				if (i%2 == 0 && j%2 != 0) 
+				{
+					theButtons[i][j].setBackground(Color.GRAY);
+				}
+
+				else if (i%2 != 0 && j%2 == 0) 
+				{
+					theButtons[i][j].setBackground(Color.GRAY);
+				}
+
+				else if (i%2 == 0 && j%2 == 0)
+				{
+					theButtons[i][j].setBackground(Color.ORANGE);
+				}
+
+				else if(i%2 == 1 && j%2 == 1)
+				{
+					theButtons[i][j].setBackground(Color.ORANGE);
+				}
+
 				middlePanel.add(theButtons[i][j]);
 			}
+
+			if(a != 8) 
+			{
+				middlePanel.add(numbers[a]);
+			}
+
+			a++;
+			i++;
 		}
 
+		middlePanel.add(letters[0]);
+		middlePanel.add(letters[1]);
+		middlePanel.add(letters[2]);
+		middlePanel.add(letters[3]);
+		middlePanel.add(letters[4]);
+		middlePanel.add(letters[5]);
+		middlePanel.add(letters[6]);
+		middlePanel.add(letters[7]);
+		middlePanel.add(letters[8]);
+
 		newGame.addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
-		//undo.addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
+		loadGame.addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
+		saveGame.addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
 		lowerPanel.add(newGame);	//adds new game button to the panel
-		//lowerPanel.add(undo);	//adds undo button to the panel
+		lowerPanel.add(loadGame); //adds load game button to the panel
+		lowerPanel.add(saveGame); //adds save game button to the panel
 		lowerPanel.add(display);	//adds the JLabel to the panel
         frame.add(upperPanel, BorderLayout.NORTH);
 		frame.add(middlePanel, BorderLayout.CENTER);	//adds the one JLabel to the JFrame and puts it in the center of the GUI
@@ -93,10 +168,20 @@ public class Chess {
 	{
 		public void actionPerformed(ActionEvent e)	//this creates the different actions that will take place when certain buttons are clicked
 		{
+			JFileChooser fc = new JFileChooser();
+
 			if(e.getSource() == newGame)	//when new game is clicked
 			{
-				undo.setEnabled(false);	//undo cannot be clicked
-				t=0;	//number of turns is 0
+				Object[] options = {"White", "Black"};
+				
+				int newWindow = JOptionPane.showOptionDialog(frame,
+					"Choose your color:", 
+					"Select a color",
+					JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.QUESTION_MESSAGE,
+					null,
+					options,
+					options[1]);
 
 				for(int i=0; i<game; i++)	//these for loops reset the game buttons to empty strings and allow them to be clicked again
 				{
@@ -111,28 +196,21 @@ public class Chess {
 				display.setText("White is up first!");	//tells the user who is up first
 			}
 
-			// else if(e.getSource() == undo)	//when undo is clicked
-			// {
-			// 	boolean not = !test;
-			// 	reset.setText(" ");	//button that was just pressed is reset to an empty string
-			// 	reset.setEnabled(true); //button allowed to be re-clicked
-			// 	t--;	//turns decreased by 1
+			else if(e.getSource() == loadGame) //when load game is clicked
+			{
+				if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
+				{
+					File file = fc.getSelectedFile();
+				}
+			}
 
-			// 	if(test)	//if it was just X's turn, they will go again
-			// 	{
-			// 		test = not;
-			// 		display.setText("It's X's turn again.");
-			// 		t--;
-
-			// 	}
-
-			// 	else	//if it was just O's turn, they will go again
-			// 	{
-			// 		test = not;
-			// 		display.setText("It's O's turn again.");
-			// 		t--;
-			// 	}
-			// }
+			else if(e.getSource() == saveGame) //when save game is clicked
+			{
+				if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) 
+				{
+					File file = fc.getSelectedFile();
+				}				
+			}
 		}
 	}
 }

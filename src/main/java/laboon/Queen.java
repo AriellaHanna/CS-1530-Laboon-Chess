@@ -4,7 +4,7 @@ public class Queen extends Piece {
 	//Constructor
 	public Queen(boolean color, int hori, int vert) {
 		super(color, hori, vert);
-		symbol = color ? "Q" : "q";
+		symbol = "Q";
 	}
 
 	//Move queen
