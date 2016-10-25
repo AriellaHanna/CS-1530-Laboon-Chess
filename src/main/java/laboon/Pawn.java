@@ -5,7 +5,7 @@ public class Pawn extends Piece {
 	public Pawn(boolean color, int hori, int vert) {
 		super(color, hori, vert);
 		hasMoved = false;
-		symbol = color ? "P" : "p";
+		symbol = "P";
 	}
 
 	//Move the pawn

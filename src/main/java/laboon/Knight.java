@@ -4,7 +4,7 @@ public class Knight extends Piece {
 	//Constructor
 	public Knight(boolean color, int hori, int vert) {
 		super(color, hori, vert);
-		symbol = color ? "N" : "n";
+		symbol = "Kn";
 	}
 
 	//Knight movement

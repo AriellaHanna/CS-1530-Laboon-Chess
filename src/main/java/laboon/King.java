@@ -4,7 +4,7 @@ public class King extends Piece {
 	//Constructor
 	public King(boolean color, int hori, int vert) {
 		super(color, hori, vert);
-		symbol = color ? "K" : "k";
+		symbol = "K";
 	}
 
 	public boolean move(int h, int v) {
