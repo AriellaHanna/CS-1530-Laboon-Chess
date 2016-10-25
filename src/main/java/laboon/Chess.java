@@ -25,6 +25,8 @@ public class Chess {
 	private boolean test;
     private Board board;
 
+	// Code for testing
+	protected static Board testBoard = new Board();
 	protected static Bishop bishop = new Bishop(true,4,4);
 	protected static King king = new King(true,4,4);
 	protected static Queen queen = new Queen(true,4,4);
@@ -32,6 +34,7 @@ public class Chess {
 	protected static Pawn pawn = new Pawn(true,4,4);
 	protected static Rook rook = new Rook(true,4,4);
 
+	
     public static void main(String[] args) {
         new Chess(8);
     }
