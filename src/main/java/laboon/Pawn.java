@@ -2,52 +2,52 @@ package laboon;
 public class Pawn extends Piece {
 	private boolean hasMoved; //Whether or not pawn has moved yet
 	//Constructor
-	public Pawn(boolean color, int hori, int vert) {
-		super(color, hori, vert);
+	public Pawn(boolean color, int row, int column) {
+		super(color, row, column);
 		hasMoved = false;
 		symbol = "P";
 	}
 
 	//Move the pawn
-	public boolean move(int h, int v) {
-		if (h != getX())
-			return capture(h,v);
+	public boolean move(int row, int column) {
+		if (column != getCol())
+			return capture(row,column);
 		else if (isWhite())
-			return whiteMove(h,v);
+			return whiteMove(row,column);
 		else
-			return blackMove(h,v);
+			return blackMove(row,column);
 	}
 
 	//Capture a piece/move diagonally
-	private boolean capture(int h, int v){
+	private boolean capture(int row, int column){
 		if (isWhite())
-			return (h-getX() == 1 && v-getY() == 1);
+			return (column-getCol() == 1 && row-getRow() == 1);
 		else
-			return (getX()-h == 1 && getY()-v == 1);
+			return (getCol()-column == 1 && getRow()-row == 1);
 	}
 
 	//Movement of white Pawn
-	private boolean whiteMove(int h, int v){
+	private boolean whiteMove(int row, int column){
 		//First move, can move two spaces
 		if (!getMoved()){
 			setMoved(true);
-			return (v-getY() <= 2 && v > getY());
+			return (row-getRow() <= 2 && row > getRow());
 		}
 		//Not first move, can only move one
 		else
-			return v-getY() == 1;
+			return row-getRow() == 1;
 	}
 
 	//Movement of black pawn
-	private boolean blackMove(int h, int v){
+	private boolean blackMove(int row, int column){
 		//First move, can move one or two
 		if (!getMoved()){
 			setMoved(true);
-			return (getY()-v <= 2 && v < getY());
+			return (getRow()-row <= 2 && row < getRow());
 		}
 		//Not first move, can only move one
 		else
-			return getY()-v == 1;
+			return getRow()-row == 1;
 	}
 
 	public void setMoved(boolean status){

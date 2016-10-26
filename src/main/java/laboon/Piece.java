@@ -2,46 +2,43 @@ package laboon;
 public class Piece {
 	private boolean taken; //True if piece has been captured, false otherwise
 	private boolean white; //True if white, false if black
-	private int x; //Horizontal position of piece
-	private int y; //Vertical position of piece
+	private int r; //Row piece is in
+	private int c; //Column piece is in
 	protected String symbol; // Letter representing the piece on the board
 
 	//Constructor
-	public Piece(boolean color, int hori, int vert) {
-		taken = false;
+	public Piece(boolean color, int row, int column) {
 		white = color;
-		x = hori;
-		y = vert;
+		r = row;
+		c = column;
 	}
 
-	public boolean isTaken() {
-		return taken;
+	// Getter for the row
+	public int getRow() {
+		return r;
 	}
 
-	public void setTaken(boolean status) {
-		taken = status;
+	//Setter for the row
+	public void setRow(int row) {
+		r = row;
 	}
 
-	public int getX() {
-		return x;
+	// Getter for the column
+	public int getCol() {
+		return c;
 	}
 
-	public void setX(int h) {
-		x = h;
+	// Setter for the column
+	public void setCol(int col) {
+		c = col;
 	}
 
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int v) {
-		y = v;
-	}
-
+	// Getter for the color
 	public boolean isWhite() {
 		return white;
 	}
 
+	// Getter for the symbol
 	public String getSymbol() {
 		return symbol;
 	}
