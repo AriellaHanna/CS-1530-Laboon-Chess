@@ -3,46 +3,78 @@ package laboon;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
+import org.junit.BeforeClass;
 import static org.junit.Assert.*;	
 
+
 public class KnightTest{
+	private static Knight knight;
+	private static Board board;
+	
+	@BeforeClass
+	public static void createBoard(){
+		board = new Board();
+	}
+	// Add a Knight to E5
+	@Before
+	public void addKnight(){
+		knight = new Knight(true,4,4);
+		board.addToSpace(4,4, knight);
+	}
+	
+	// Test knight to F7, captures pawn
 	@Test
 	public void testKnightMoveUpAndRight() {
-		assertTrue(Chess.knight.move(6,5));
+		assertTrue(knight.move(board,6,5));
 	}
 	
+	// Test knight to D7, captures pawn
 	@Test
 	public void testKnightMoveUpAndLeft() {
-		assertTrue(Chess.knight.move(6,3));
+		assertTrue(knight.move(board,6,3));
 	}	
 	
+	// Test knight to D3
 	@Test
 	public void testKnightMoveDownAndLeft() {
-		assertTrue(Chess.knight.move(2,3));
+		assertTrue(knight.move(board,2,3));
 	}
 	
+	// Test knight to F3
 	@Test
 	public void testKnightMoveDownAndRight() {
-		assertTrue(Chess.knight.move(2,5));
+		assertTrue(knight.move(board,2,5));
 	}
 	
+	// Test knight to C6
 	@Test
 	public void testKnightMoveLeftAndUp() {
-		assertTrue(Chess.knight.move(5,2));
+		assertTrue(knight.move(board,5,2));
 	}	
 	
+	// Test knight to C4
 	@Test
 	public void testKnightMoveLeftAndDown() {
-		assertTrue(Chess.knight.move(3,2));
+		assertTrue(knight.move(board,3,2));
 	}	
 	
+	// Test knight to G6
 	@Test
 	public void testKnightMoveRightAndUp() {
-		assertTrue(Chess.knight.move(5,6));
+		assertTrue(knight.move(board,5,6));
 	}
 	
+	// Test knight to G4
 	@Test
 	public void testKnightMoveRightAndDown() {
-		assertTrue(Chess.knight.move(3,6));
+		assertTrue(knight.move(board,3,6));
+	}
+	
+	// Test knight from A3 to B1, fails because ally knight is there
+	@Test
+	public void testKnightCollision() {
+		knight = new Knight(true,2,0);
+		board.addToSpace(2,0,knight);
+		assertFalse(knight.move(board,0,1));
 	}
 }
