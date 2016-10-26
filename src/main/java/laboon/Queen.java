@@ -2,15 +2,9 @@ package laboon;
 public class Queen extends Piece {
 
 	//Constructor
-<<<<<<< HEAD
 	public Queen(boolean color, int hori, int vert) {
 		super(color, hori, vert);
 		symbol = "Q";
-=======
-	public Queen(boolean color, int row, int column) {
-		super(color, row, column);
-		symbol = color ? "Q" : "q";
->>>>>>> 37128feed0cfcf543bbf382519131bafacc9ed90
 	}
 
 	//Move queen
