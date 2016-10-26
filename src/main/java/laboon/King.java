@@ -1,6 +1,6 @@
 package laboon;
 public class King extends Piece {
-
+	private boolean check = false; //Whether or not king is in check, set to false until checking for check is implemented
 	//Constructor
 	public King(boolean color, int row, int column) {
 		super(color, row, column);
