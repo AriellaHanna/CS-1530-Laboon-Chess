@@ -25,7 +25,7 @@ public class KingTest{
 	// Remove the piece we added
 	@After
 	public void removeKing(){
-		board.removeFromSpace(king.getRow(),king.getCol());
+		board.removeFromSpace(king.getRow(),king.getCol(),false);
 	}
 	
 	// Test king to E6

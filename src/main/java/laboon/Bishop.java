@@ -12,11 +12,11 @@ public class Bishop extends Piece {
 		//rise over run = |1| and there are no pieces in the path
 		if (Math.abs(column-getCol()) == Math.abs(row-getRow()) && clearPath(board, row, column))
 		{
-			board.removeFromSpace(getRow(),getCol()); //Remove piece from old destination
+			board.removeFromSpace(getRow(),getCol(),false); //Remove piece from old destination
 			if (capture(board, row, column))
 			{
 				
-				board.removeFromSpace(row,column); //Remove captured piece
+				board.removeFromSpace(row,column, true); //Remove captured piece
 			}
 			board.addToSpace(row,column, this); //Move piece to new space
 			setCol(column);

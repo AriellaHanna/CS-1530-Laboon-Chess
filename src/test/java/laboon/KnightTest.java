@@ -22,6 +22,11 @@ public class KnightTest{
 		board.addToSpace(4,4, knight);
 	}
 	
+	@After
+	public void removeKnight(){
+		board.removeFromSpace(knight.getRow(),knight.getCol(),false);
+	}
+	
 	// Test knight to F7, captures pawn
 	@Test
 	public void testKnightMoveUpAndRight() {

@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 
-import laboon.Chess;
 // Tests the Bishop piece	
 public class BishopTest{
 	private static Bishop bishop;
@@ -25,7 +24,7 @@ public class BishopTest{
 	// Remove the piece we added
 	@After
 	public void removeBishop(){
-		board.removeFromSpace(bishop.getRow(),bishop.getCol());
+		board.removeFromSpace(bishop.getRow(),bishop.getCol(),false);
 	}
 	
 	// Test the bishop moving to F6

@@ -13,10 +13,10 @@ public class King extends Piece {
 		if ((Math.abs(column-getCol()) <= 1) && (Math.abs(row-getRow()) <=1) &&
 			 !(column == getCol() && row == getRow()) && clearPath(board, row, column))
 		{
-			board.removeFromSpace(getRow(),getCol());
+			board.removeFromSpace(getRow(),getCol(),false);
 			if (capture(board,row,column))
 			{
-				board.removeFromSpace(row,column);
+				board.removeFromSpace(row,column,true);
 			}
 			board.addToSpace(row,column,this);
 			setCol(column);

@@ -12,10 +12,10 @@ public class Knight extends Piece {
 		if ((Math.abs(column-getCol())==2 && Math.abs(row-getRow())==1)^(Math.abs(column-getCol())==1 && Math.abs(row-getRow())==2)
 			&& (capture(board, row, column) || board.spaceIsEmpty(row,column)))
 		{
-			board.removeFromSpace(getRow(),getCol());
+			board.removeFromSpace(getRow(),getCol(),false);
 			if (capture(board,row,column))
 			{
-				board.removeFromSpace(row,column);
+				board.removeFromSpace(row,column,true);
 			}
 			board.addToSpace(row,column,this);
 			setCol(column);

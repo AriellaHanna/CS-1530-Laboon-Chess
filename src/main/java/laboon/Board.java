@@ -130,13 +130,14 @@ public class Board {
 	}
 	
 	// Remove a piece from a space
-	public Piece removeFromSpace(int row, int column) {
+	public Piece removeFromSpace(int row, int column, boolean capture) {
 		if (spaceIsEmpty(row, column))
 			return null;
 		else
 		{
 			Piece piece = getSpace(row,column).remove();
-			capture(piece);
+			if (capture)
+				capture(piece);
 			return piece;	
 		}	
 	}
