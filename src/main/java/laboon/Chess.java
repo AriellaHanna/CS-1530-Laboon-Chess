@@ -204,7 +204,10 @@ public class Chess {
 				if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
 				{
 					File file = fc.getSelectedFile();
+<<<<<<< HEAD
 					loadPGN(file);
+=======
+>>>>>>> 047a024c8b6bca47e55a9cc56cfc5d4bffbe0da9
 				}
 			}
 
@@ -213,6 +216,7 @@ public class Chess {
 				if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) 
 				{
 					File file = fc.getSelectedFile();
+<<<<<<< HEAD
 					savePGN(file);
 				}				
 			}
@@ -260,6 +264,10 @@ public class Chess {
 			catch(FileNotFoundException ex) {
 				System.out.println("Unable to open file");     
 			}
+=======
+				}				
+			}
+>>>>>>> 047a024c8b6bca47e55a9cc56cfc5d4bffbe0da9
 		}
 	}
 }
