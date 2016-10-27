@@ -7,6 +7,9 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.undo.*;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class Chess {
 	private JFrame frame;	//global variables
@@ -201,6 +204,7 @@ public class Chess {
 				if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
 				{
 					File file = fc.getSelectedFile();
+					loadPGN(file);
 				}
 			}
 
@@ -209,8 +213,55 @@ public class Chess {
 				if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) 
 				{
 					File file = fc.getSelectedFile();
+					savePGN(file);
 				}				
 			}
 		}
+		// loads and parses the PGN file 
+		public void loadPGN(File file){
+			try{
+				Scanner inFile = new Scanner(file);
+				
+				//pattern used to find chess piece movements in PGN file
+				String pattern  = "((O-O)|(O-O-O)|[abcdefghNxBQORK]+[12345678])+[\\+]?(\\s)([abcdefghNxBQORK]+[12345678])*(O-O)?(O-O-O)?[\\+]?";
+				Pattern p = Pattern.compile(pattern);
+				
+				//Searches the file for pattern
+				while(inFile.hasNext()){
+					String line = inFile.nextLine();
+					Matcher m = p.matcher(line);
+					while(m.find()){
+						System.out.println("Found value: " + m.group());
+					}
+				}
+				inFile.close();
+				
+			}
+			catch(FileNotFoundException ex) {
+				System.out.println("Unable to open file");     
+			}
+		}
+		//Writes a PGN file 
+		public void savePGN(File file){
+			try{
+				PrintWriter writer = new PrintWriter(file);
+				String event = "[Event: \"Local Game\"]";
+				String site = "[Site: \"local\"]";
+				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+				Date date = new Date();
+				String d = "[Date \""+dateFormat.format(date)+"\"]";
+				String white = "[White \"Player\"]";
+				String black = "[Black \"Computer\"]";
+				
+				//writes the header of the PGN file
+				writer.println(event+"\n"+site+"\n"+d+"\n"+white+"\n"+black);
+				writer.close();
+			}
+			catch(FileNotFoundException ex) {
+				System.out.println("Unable to open file");     
+			}
+							
+		}
+		
 	}
 }
