@@ -5,7 +5,7 @@ public class Bishop extends Piece {
 	//Constructor
 	public Bishop(boolean color, int row, int column) {
 		super(color, row, column);
-        symbol = color ? "B" : "b";
+        symbol = "B";
 	}
 
 	public boolean move(Board board, int row, int column) {

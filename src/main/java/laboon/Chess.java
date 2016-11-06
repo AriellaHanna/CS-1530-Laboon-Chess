@@ -23,12 +23,14 @@ public class Chess {
 	private JButton newGame;
 	private JButton loadGame;
 	private JButton saveGame;
+	private JButton flipBoard;
 	private Control ButtonListener;
 	private int game;
 	private int t;
 	private boolean win = false;
 	private boolean test;
     private Board board;
+	private boolean whiteOnBottom;
 
 	protected static Bishop bishop = new Bishop(true,4,4);
 	protected static King king = new King(true,4,4);
@@ -73,6 +75,7 @@ public class Chess {
 		newGame = new JButton("New Game");	//creates a new game button
 		loadGame = new JButton("Load Game"); //loads an existing game
 		saveGame = new JButton("Save Game"); //saves current game
+		flipBoard = new JButton("Flip Board"); //Flips the chess board
         title = new JLabel("", JLabel.CENTER);
 		display = new JLabel();	//creates a JLabel that will be altered throughout the game telling the user who is up
         title.setText("Laboon Chess");
@@ -89,6 +92,8 @@ public class Chess {
 		middlePanel.add(numbers[0]);
 
         board = new Board();
+
+		whiteOnBottom = true;
 		
 		int i = 0;
 		int a = 1;
@@ -156,9 +161,11 @@ public class Chess {
 		newGame.addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
 		loadGame.addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
 		saveGame.addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
+		flipBoard.addActionListener(ButtonListener); //this line calls the ActionLister so that the buttons will function when clicked
 		lowerPanel.add(newGame);	//adds new game button to the panel
 		lowerPanel.add(loadGame); //adds load game button to the panel
 		lowerPanel.add(saveGame); //adds save game button to the panel
+		lowerPanel.add(flipBoard); //adds flip board button to the panel
 		lowerPanel.add(display);	//adds the JLabel to the panel
         frame.add(upperPanel, BorderLayout.NORTH);
 		frame.add(middlePanel, BorderLayout.CENTER);	//adds the one JLabel to the JFrame and puts it in the center of the GUI
@@ -175,16 +182,146 @@ public class Chess {
 
 			if(e.getSource() == newGame)	//when new game is clicked
 			{
-				Object[] options = {"White", "Black"};
+				Object[] playerOptions = {"Player 1", "Player 2"};
+				Object[] playerOneColorOptions = {"White", "Blue", "Red", "Green"};
+				Object[] playerTwoColorOptions = {"Black", "Blue", "Red", "Green"};
 				
 				int newWindow = JOptionPane.showOptionDialog(frame,
-					"Choose your color:", 
-					"Select a color",
+					"Choose your player:", 
+					"Select a player",
 					JOptionPane.YES_NO_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE,
 					null,
-					options,
-					options[1]);
+					playerOptions,
+					playerOptions[1]);
+
+				if (newWindow == 0)
+				{
+					int chooseColorWindow = JOptionPane.showOptionDialog(frame,
+						"Choose your color:", 
+						"Select a color",
+						JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.QUESTION_MESSAGE,
+						null,
+						playerOneColorOptions,
+						playerOneColorOptions[3]);
+
+					if (chooseColorWindow == 0)
+					{
+						for (int i = 6; i < 8; i++)
+						{
+							for (int j = 0; j < 8; j++)
+							{
+								theButtons[i][j].setForeground(Color.WHITE);	
+							}
+						}
+					}	
+
+					else if (chooseColorWindow == 1)
+					{
+						for (int i = 6; i < 8; i++)
+						{
+							for (int j = 0; j < 8; j++)
+							{
+								theButtons[i][j].setForeground(Color.BLUE);	
+							}
+						}						
+					}
+
+					else if (chooseColorWindow == 2)
+					{
+						for (int i = 6; i < 8; i++)
+						{
+							for (int j = 0; j < 8; j++)
+							{
+								theButtons[i][j].setForeground(Color.RED);	
+							}
+						}						
+					}
+
+					else if (chooseColorWindow == 3) 
+					{
+						for (int i = 6; i < 8; i++)
+						{
+							for (int j = 0; j < 8; j++)
+							{
+								theButtons[i][j].setForeground(Color.GREEN);	
+							}
+						}
+					}
+
+					for (int i = 0; i < 2; i++)
+					{
+						for (int j = 0; j < 8; j++)
+						{
+							theButtons[i][j].setForeground(Color.BLACK);	
+						}
+					}					
+				}
+
+				else if (newWindow == 1) 
+				{
+					int chooseColorWindow = JOptionPane.showOptionDialog(frame,
+						"Choose your color:", 
+						"Select a color",
+						JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.QUESTION_MESSAGE,
+						null,
+						playerTwoColorOptions,
+						playerTwoColorOptions[3]);
+
+					if (chooseColorWindow == 0)
+					{
+						for (int i = 0; i < 2; i++)
+						{
+							for (int j = 0; j < 8; j++)
+							{
+								theButtons[i][j].setForeground(Color.BLACK);	
+							}
+						}
+					}	
+
+					else if (chooseColorWindow == 1)
+					{
+						for (int i = 0; i < 2; i++)
+						{
+							for (int j = 0; j < 8; j++)
+							{
+								theButtons[i][j].setForeground(Color.BLUE);	
+							}
+						}						
+					}
+
+					else if (chooseColorWindow == 2)
+					{
+						for (int i = 0; i < 2; i++)
+						{
+							for (int j = 0; j < 8; j++)
+							{
+								theButtons[i][j].setForeground(Color.RED);	
+							}
+						}						
+					}
+
+					else if (chooseColorWindow == 3) 
+					{
+						for (int i = 0; i < 2; i++)
+						{
+							for (int j = 0; j < 8; j++)
+							{
+								theButtons[i][j].setForeground(Color.GREEN);	
+							}
+						}
+					}
+
+					for (int i = 6; i < 8; i++)
+					{
+						for (int j = 0; j < 8; j++)
+						{
+							theButtons[i][j].setForeground(Color.WHITE);	
+						}
+					}										
+				}
 
 				for(int i=0; i<game; i++)	//these for loops reset the game buttons to empty strings and allow them to be clicked again
 				{
@@ -215,6 +352,90 @@ public class Chess {
 					File file = fc.getSelectedFile();
 					savePGN(file);
 				}				
+			}
+
+			else if(e.getSource() == flipBoard) //when flip board is clicked
+			{
+				if (whiteOnBottom == true)
+				{
+					for (int i = 0; i < 8; i++) 
+					{
+						for (int j = 0; j < 8; j++) 
+						{
+							middlePanel.remove(theButtons[i][j]);
+							middlePanel.revalidate();
+							middlePanel.repaint();
+						}
+
+						middlePanel.remove(letters[i]);
+						middlePanel.remove(numbers[i]);					
+					}
+
+					middlePanel.remove(letters[8]);
+
+					middlePanel.add(letters[8]);
+					middlePanel.add(letters[7]);
+					middlePanel.add(letters[6]);
+					middlePanel.add(letters[5]);
+					middlePanel.add(letters[4]);
+					middlePanel.add(letters[3]);
+					middlePanel.add(letters[2]);
+					middlePanel.add(letters[1]);
+					middlePanel.add(letters[0]);
+
+					for(int i = 7; i >= 0; i--) 
+					{
+						for(int j = 7; j >= 0; j--) 
+						{
+							middlePanel.add(theButtons[i][j]);
+						}
+
+						middlePanel.add(numbers[i]);
+					}
+
+					whiteOnBottom = false;
+				}
+
+				else 
+				{
+					for (int i = 0; i < 8; i++) 
+					{
+						for (int j = 0; j < 8; j++) 
+						{
+							middlePanel.remove(theButtons[i][j]);
+							middlePanel.revalidate();
+							middlePanel.repaint();
+						}
+
+						middlePanel.remove(letters[i]);
+						middlePanel.remove(numbers[i]);					
+					}
+
+					middlePanel.remove(letters[8]);
+
+					for(int i = 0; i < 8; i++) 
+					{
+						middlePanel.add(numbers[i]);
+
+						for(int j = 0; j < 8; j++) 
+						{
+							middlePanel.add(theButtons[i][j]);
+						}
+					}
+
+
+					middlePanel.add(letters[0]);
+					middlePanel.add(letters[1]);
+					middlePanel.add(letters[2]);
+					middlePanel.add(letters[3]);
+					middlePanel.add(letters[4]);
+					middlePanel.add(letters[5]);
+					middlePanel.add(letters[6]);
+					middlePanel.add(letters[7]);
+					middlePanel.add(letters[8]);
+
+					whiteOnBottom = true;					
+				}
 			}
 		}
 		// loads and parses the PGN file 
