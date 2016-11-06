@@ -94,11 +94,11 @@ public class Chess {
         board = new Board();
 
 		whiteOnBottom = true;
-		
+
 		int i = 0;
 		int a = 1;
 
-		while(a < 9) 
+		while(a < 9)
 		{
 			for (int j = 0; j < theButtons[i].length; j++)
 			{
@@ -106,22 +106,22 @@ public class Chess {
 				theButtons[i][j] = new JButton(p == null ? " " : p.getSymbol());
 				theButtons[i][j].addActionListener(ButtonListener);	//this line calls the ActionLister so that the buttons will function when clicked
 
-						if (i == 0 || i == 1) 
+						if (i == 0 || i == 1)
 						{
 							theButtons[i][j].setForeground(Color.BLACK);
 						}
 
-						else if (i == 6 || i == 7) 
+						else if (i == 6 || i == 7)
 						{
 							theButtons[i][j].setForeground(Color.WHITE);
-						}				
+						}
 
-				if (i%2 == 0 && j%2 != 0) 
+				if (i%2 == 0 && j%2 != 0)
 				{
 					theButtons[i][j].setBackground(Color.GRAY);
 				}
 
-				else if (i%2 != 0 && j%2 == 0) 
+				else if (i%2 != 0 && j%2 == 0)
 				{
 					theButtons[i][j].setBackground(Color.GRAY);
 				}
@@ -139,7 +139,7 @@ public class Chess {
 				middlePanel.add(theButtons[i][j]);
 			}
 
-			if(a != 8) 
+			if(a != 8)
 			{
 				middlePanel.add(numbers[a]);
 			}
@@ -185,9 +185,14 @@ public class Chess {
 				Object[] playerOptions = {"Player 1", "Player 2"};
 				Object[] playerOneColorOptions = {"White", "Blue", "Red", "Green"};
 				Object[] playerTwoColorOptions = {"Black", "Blue", "Red", "Green"};
-				
+                Color[] playerOneColors = {Color.WHITE, Color.BLUE, Color.RED, Color.GREEN};
+                Color[] playerTwoColors = {Color.BLACK, Color.BLUE, Color.RED, Color.GREEN};
+                Object[] colorOptions = {};
+                Color bottomColor = Color.WHITE;
+                Color topColor = Color.BLACK;
+
 				int newWindow = JOptionPane.showOptionDialog(frame,
-					"Choose your player:", 
+					"Choose your player:",
 					"Select a player",
 					JOptionPane.YES_NO_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE,
@@ -195,132 +200,32 @@ public class Chess {
 					playerOptions,
 					playerOptions[1]);
 
-				if (newWindow == 0)
-				{
-					int chooseColorWindow = JOptionPane.showOptionDialog(frame,
-						"Choose your color:", 
-						"Select a color",
-						JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE,
-						null,
-						playerOneColorOptions,
-						playerOneColorOptions[3]);
+                if (newWindow == 0) {  // selected player 1
+                    colorOptions = playerOneColorOptions;
+                } else if (newWindow == 1) {  // selected player 2
+                    colorOptions = playerTwoColorOptions;
+                }
 
-					if (chooseColorWindow == 0)
-					{
-						for (int i = 6; i < 8; i++)
-						{
-							for (int j = 0; j < 8; j++)
-							{
-								theButtons[i][j].setForeground(Color.WHITE);	
-							}
-						}
-					}	
+				int chooseColorWindow = JOptionPane.showOptionDialog(frame,
+					"Choose your color:",
+					"Select a color",
+					JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.QUESTION_MESSAGE,
+					null,
+					colorOptions,
+					colorOptions[3]);
 
-					else if (chooseColorWindow == 1)
-					{
-						for (int i = 6; i < 8; i++)
-						{
-							for (int j = 0; j < 8; j++)
-							{
-								theButtons[i][j].setForeground(Color.BLUE);	
-							}
-						}						
-					}
+                if (newWindow == 0) {  // player 1 is on the bottom
+                    bottomColor = playerOneColors[chooseColorWindow];
+                } else if (newWindow == 1) {  // player 2 is on the top
+                    topColor = playerTwoColors[chooseColorWindow];
+                }
 
-					else if (chooseColorWindow == 2)
-					{
-						for (int i = 6; i < 8; i++)
-						{
-							for (int j = 0; j < 8; j++)
-							{
-								theButtons[i][j].setForeground(Color.RED);	
-							}
-						}						
-					}
-
-					else if (chooseColorWindow == 3) 
-					{
-						for (int i = 6; i < 8; i++)
-						{
-							for (int j = 0; j < 8; j++)
-							{
-								theButtons[i][j].setForeground(Color.GREEN);	
-							}
-						}
-					}
-
-					for (int i = 0; i < 2; i++)
-					{
-						for (int j = 0; j < 8; j++)
-						{
-							theButtons[i][j].setForeground(Color.BLACK);	
-						}
-					}					
-				}
-
-				else if (newWindow == 1) 
-				{
-					int chooseColorWindow = JOptionPane.showOptionDialog(frame,
-						"Choose your color:", 
-						"Select a color",
-						JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE,
-						null,
-						playerTwoColorOptions,
-						playerTwoColorOptions[3]);
-
-					if (chooseColorWindow == 0)
-					{
-						for (int i = 0; i < 2; i++)
-						{
-							for (int j = 0; j < 8; j++)
-							{
-								theButtons[i][j].setForeground(Color.BLACK);	
-							}
-						}
-					}	
-
-					else if (chooseColorWindow == 1)
-					{
-						for (int i = 0; i < 2; i++)
-						{
-							for (int j = 0; j < 8; j++)
-							{
-								theButtons[i][j].setForeground(Color.BLUE);	
-							}
-						}						
-					}
-
-					else if (chooseColorWindow == 2)
-					{
-						for (int i = 0; i < 2; i++)
-						{
-							for (int j = 0; j < 8; j++)
-							{
-								theButtons[i][j].setForeground(Color.RED);	
-							}
-						}						
-					}
-
-					else if (chooseColorWindow == 3) 
-					{
-						for (int i = 0; i < 2; i++)
-						{
-							for (int j = 0; j < 8; j++)
-							{
-								theButtons[i][j].setForeground(Color.GREEN);	
-							}
-						}
-					}
-
-					for (int i = 6; i < 8; i++)
-					{
-						for (int j = 0; j < 8; j++)
-						{
-							theButtons[i][j].setForeground(Color.WHITE);	
-						}
-					}										
+				for (int i = 0; i < 2; i++) {
+					for (int j = 0; j < 8; j++) {
+                        theButtons[i][j].setForeground(topColor);
+						theButtons[i+6][j].setForeground(bottomColor);
+                    }
 				}
 
 				for(int i=0; i<game; i++)	//these for loops reset the game buttons to empty strings and allow them to be clicked again
@@ -338,7 +243,7 @@ public class Chess {
 
 			else if(e.getSource() == loadGame) //when load game is clicked
 			{
-				if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) 
+				if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
 				{
 					File file = fc.getSelectedFile();
 					loadPGN(file);
@@ -347,106 +252,82 @@ public class Chess {
 
 			else if(e.getSource() == saveGame) //when save game is clicked
 			{
-				if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) 
+				if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
 				{
 					File file = fc.getSelectedFile();
 					savePGN(file);
-				}				
+				}
 			}
 
 			else if(e.getSource() == flipBoard) //when flip board is clicked
 			{
+
+                // remove buttons, letters, and numbers
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        middlePanel.remove(theButtons[i][j]);
+                        middlePanel.revalidate();
+                        middlePanel.repaint();
+                    }
+
+                    middlePanel.remove(letters[i]);
+                    middlePanel.remove(numbers[i]);
+                }
+
+                middlePanel.remove(letters[8]);  // don't forget corner
+
 				if (whiteOnBottom == true)
 				{
-					for (int i = 0; i < 8; i++) 
+                    for (int i = 8; i >= 0; i--)
+                    {
+                        middlePanel.add(letters[i]);
+                    }
+
+					for(int i = 7; i >= 0; i--)
 					{
-						for (int j = 0; j < 8; j++) 
-						{
-							middlePanel.remove(theButtons[i][j]);
-							middlePanel.revalidate();
-							middlePanel.repaint();
-						}
-
-						middlePanel.remove(letters[i]);
-						middlePanel.remove(numbers[i]);					
-					}
-
-					middlePanel.remove(letters[8]);
-
-					middlePanel.add(letters[8]);
-					middlePanel.add(letters[7]);
-					middlePanel.add(letters[6]);
-					middlePanel.add(letters[5]);
-					middlePanel.add(letters[4]);
-					middlePanel.add(letters[3]);
-					middlePanel.add(letters[2]);
-					middlePanel.add(letters[1]);
-					middlePanel.add(letters[0]);
-
-					for(int i = 7; i >= 0; i--) 
-					{
-						for(int j = 7; j >= 0; j--) 
+						for(int j = 7; j >= 0; j--)
 						{
 							middlePanel.add(theButtons[i][j]);
 						}
 
 						middlePanel.add(numbers[i]);
 					}
-
-					whiteOnBottom = false;
 				}
 
-				else 
+				else
 				{
-					for (int i = 0; i < 8; i++) 
-					{
-						for (int j = 0; j < 8; j++) 
-						{
-							middlePanel.remove(theButtons[i][j]);
-							middlePanel.revalidate();
-							middlePanel.repaint();
-						}
 
-						middlePanel.remove(letters[i]);
-						middlePanel.remove(numbers[i]);					
-					}
 
-					middlePanel.remove(letters[8]);
-
-					for(int i = 0; i < 8; i++) 
+					for(int i = 0; i < 8; i++)
 					{
 						middlePanel.add(numbers[i]);
 
-						for(int j = 0; j < 8; j++) 
+						for(int j = 0; j < 8; j++)
 						{
 							middlePanel.add(theButtons[i][j]);
 						}
 					}
 
-
-					middlePanel.add(letters[0]);
-					middlePanel.add(letters[1]);
-					middlePanel.add(letters[2]);
-					middlePanel.add(letters[3]);
-					middlePanel.add(letters[4]);
-					middlePanel.add(letters[5]);
-					middlePanel.add(letters[6]);
-					middlePanel.add(letters[7]);
-					middlePanel.add(letters[8]);
-
-					whiteOnBottom = true;					
+                    for (int i = 0; i <= 8; i++)
+                    {
+					   middlePanel.add(letters[i]);
+                    }
 				}
+
+                whiteOnBottom = !whiteOnBottom;
 			}
 		}
-		// loads and parses the PGN file 
+		// loads and parses the PGN file
 		public void loadPGN(File file){
 			try{
 				Scanner inFile = new Scanner(file);
-				
+
 				//pattern used to find chess piece movements in PGN file
 				String pattern  = "((O-O)|(O-O-O)|[abcdefghNxBQORK]+[12345678])+[\\+]?(\\s)([abcdefghNxBQORK]+[12345678])*(O-O)?(O-O-O)?[\\+]?";
 				Pattern p = Pattern.compile(pattern);
-				
+
 				//Searches the file for pattern
 				while(inFile.hasNext()){
 					String line = inFile.nextLine();
@@ -456,13 +337,13 @@ public class Chess {
 					}
 				}
 				inFile.close();
-				
+
 			}
 			catch(FileNotFoundException ex) {
-				System.out.println("Unable to open file");     
+				System.out.println("Unable to open file");
 			}
 		}
-		//Writes a PGN file 
+		//Writes a PGN file
 		public void savePGN(File file){
 			try{
 				PrintWriter writer = new PrintWriter(file);
@@ -473,16 +354,16 @@ public class Chess {
 				String d = "[Date \""+dateFormat.format(date)+"\"]";
 				String white = "[White \"Player\"]";
 				String black = "[Black \"Computer\"]";
-				
+
 				//writes the header of the PGN file
 				writer.println(event+"\n"+site+"\n"+d+"\n"+white+"\n"+black);
 				writer.close();
 			}
 			catch(FileNotFoundException ex) {
-				System.out.println("Unable to open file");     
+				System.out.println("Unable to open file");
 			}
-							
+
 		}
-		
+
 	}
 }
