@@ -1,5 +1,5 @@
 package laboon;
-public class Piece {
+public abstract class Piece {
 	private boolean taken; //True if piece has been captured, false otherwise
 	private boolean white; //True if white, false if black
 	private int r; //Row piece is in
@@ -12,6 +12,9 @@ public class Piece {
 		r = row;
 		c = column;
 	}
+
+	// Move the piece, return true if completed, false if illegal
+	public abstract boolean move(Board board, int row, int column);
 
 	// Getter for the row
 	public int getRow() {
