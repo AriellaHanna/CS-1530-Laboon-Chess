@@ -31,6 +31,8 @@ public class Chess {
     private boolean test;
     private Board board;
     private boolean whiteOnBottom;
+    private Color blacksColor = Color.BLACK;
+    private Color whitesColor = Color.WHITE;
 
     protected static Bishop bishop = new Bishop(true,4,4);
     protected static King king = new King(true,4,4);
@@ -176,6 +178,9 @@ public class Chess {
 
     private class Control implements ActionListener
     {
+        boolean pieceSelected = false;
+        int r1, r2, c1, c2;
+
         public void actionPerformed(ActionEvent e)  //this creates the different actions that will take place when certain buttons are clicked
         {
             JFileChooser fc = new JFileChooser();
@@ -188,8 +193,9 @@ public class Chess {
                 Color[] playerOneColors = {Color.WHITE, Color.BLUE, Color.RED, Color.GREEN};
                 Color[] playerTwoColors = {Color.BLACK, Color.BLUE, Color.RED, Color.GREEN};
                 Object[] colorOptions = {};
-                Color bottomColor = Color.WHITE;
-                Color topColor = Color.BLACK;
+                whitesColor = Color.WHITE;
+                blacksColor = Color.BLACK;
+                board = new Board();
 
                 int newWindow = JOptionPane.showOptionDialog(frame,
                     "Choose your player:",
@@ -216,28 +222,12 @@ public class Chess {
                     colorOptions[3]);
 
                 if (newWindow == 0) {  // player 1 is on the bottom
-                    bottomColor = playerOneColors[chooseColorWindow];
+                    whitesColor = playerOneColors[chooseColorWindow];
                 } else if (newWindow == 1) {  // player 2 is on the top
-                    topColor = playerTwoColors[chooseColorWindow];
+                    blacksColor = playerTwoColors[chooseColorWindow];
                 }
 
-                for (int i = 0; i < 2; i++) {
-                    for (int j = 0; j < 8; j++) {
-                        theButtons[i][j].setForeground(topColor);
-                        theButtons[i+6][j].setForeground(bottomColor);
-                    }
-                }
-
-                for(int i=0; i<game; i++)   //these for loops reset the game buttons to empty strings and allow them to be clicked again
-                {
-                    for(int j=0; j<game; j++)
-                    {
-                        Piece p = board.getSpace(i,j).getPiece();
-                        theButtons[i][j].setText(p == null ? " " : p.getSymbol());
-                        theButtons[i][j].setEnabled(true);
-                    }
-                }
-
+                redrawBoard();
                 display.setText("White is up first!");  //tells the user who is up first
             }
 
@@ -318,7 +308,65 @@ public class Chess {
 
                 whiteOnBottom = !whiteOnBottom;
             }
+
+            else {
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        if (e.getSource() == theButtons[i][j])
+                        {
+                            System.out.printf("(%d, %d)%n", i, j);
+                            if (!pieceSelected)
+                            {
+                                r1 = i;
+                                c1 = j;
+                                pieceSelected = true;
+                            }
+                            else {
+                                r2 = i;
+                                c2 = j;
+                                System.out.println(makeMove(r1, c1, r2, c2));
+                                redrawBoard();
+                                pieceSelected = false;
+                            }
+                        }
+                    }
+                }
+            }
         }
+
+        // Reset the game buttons to empty strings and allow them to be clicked again
+        public void redrawBoard() {
+            for(int i=0; i<game; i++)
+            {
+                for(int j=0; j<game; j++)
+                {
+                    Piece p = board.getSpacePiece(i, j);
+                    theButtons[i][j].setText(p == null ? " " : p.getSymbol());
+                    theButtons[i][j].setForeground(p != null && p.isWhite() ? whitesColor : blacksColor);
+                    theButtons[i][j].setEnabled(true);
+                }
+            }
+        }
+
+
+        // Attempts to move the piece at (r1, c1) to (r2, c2).
+        // Returns true if successful, otherwise returns false.
+        public boolean makeMove(int r1, int c1, int r2, int c2) {
+            // TODO: make sure the piece belongs to the player
+            Piece p = board.getSpacePiece(r1, c1);
+            if (p == null) return false;  // if a piece was clicked on
+            if (p.move(board, r2, c2)) {   // if the move is valid
+                boolean capture = !board.spaceIsEmpty(r2, c2);
+                board.removeFromSpace(r2, c2, capture);
+                board.removeFromSpace(r1, c1, false);
+                board.addToSpace(r2, c2, p);
+                return true;
+            }
+            return false;
+        }
+
         // loads and parses the PGN file
         public void loadPGN(File file){
             try{
