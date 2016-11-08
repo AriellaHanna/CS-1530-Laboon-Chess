@@ -372,9 +372,9 @@ public class Chess {
         public boolean makeMove(int r1, int c1, int r2, int c2) {
             // TODO: make sure the piece belongs to the player
             Piece p = board.getSpacePiece(r1, c1);
+			if (p == null) return false;  // if a piece was clicked on
 			//checks whose turn it is
 			if((playerTurn && p.isWhite()) || (!playerTurn && !p.isWhite())){
-				if (p == null) return false;  // if a piece was clicked on
 				if (p.move(board, r2, c2)) {   // if the move is valid
 					boolean capture = !board.spaceIsEmpty(r2, c2);
 					board.removeFromSpace(r2, c2, capture);
