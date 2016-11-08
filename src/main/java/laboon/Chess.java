@@ -32,14 +32,12 @@ public class Chess {
     private Board board;
     private boolean whiteOnBottom;
     private Color blacksColor = Color.BLACK;
+	private String blacksColorName = "Black";
     private Color whitesColor = Color.WHITE;
+	private String whitesColorName = "White";
+	private boolean playerTurn = true;
 
-    protected static Bishop bishop = new Bishop(true,4,4);
-    protected static King king = new King(true,4,4);
-    protected static Queen queen = new Queen(true,4,4);
-    protected static Knight knight = new Knight(true,4,4);
-    protected static Pawn pawn = new Pawn(true,4,4);
-    protected static Rook rook = new Rook(true,4,4);
+    
 
     public static void main(String[] args) {
         new Chess(8);
@@ -81,8 +79,8 @@ public class Chess {
         title = new JLabel("", JLabel.CENTER);
         display = new JLabel(); //creates a JLabel that will be altered throughout the game telling the user who is up
         title.setText("Laboon Chess");
-        display.setText("White is up first!");
-        upperPanel = new JPanel();
+        display.setText("It is " + whitesColorName + "'s turn first");  //tells the user who is up first
+		upperPanel = new JPanel();
         middlePanel = new JPanel(); //creates a JPanel
         lowerPanel = new JPanel();  //creates another JPanel
 
@@ -223,12 +221,27 @@ public class Chess {
 
                 if (newWindow == 0) {  // player 1 is on the bottom
                     whitesColor = playerOneColors[chooseColorWindow];
+					
+					//sets the whitesColorName and blacksColorName String for displaying whose turn and alert
+					if(whitesColor == Color.WHITE) whitesColorName = "White";
+					else if(whitesColor == Color.BLUE) whitesColorName = "Blue";
+					else if(whitesColor == Color.RED) whitesColorName = "Red";
+					else whitesColorName = "Green";
+					blacksColorName = "Black";
                 } else if (newWindow == 1) {  // player 2 is on the top
                     blacksColor = playerTwoColors[chooseColorWindow];
+					
+					//sets the whitesColorName and blacksColorName String for displaying whose turn and alert
+					if(blacksColor == Color.WHITE) blacksColorName = "Black";
+					else if(blacksColor == Color.BLUE) blacksColorName = "Blue";
+					else if(blacksColor == Color.RED) blacksColorName = "Red";
+					else blacksColorName = "Green";
+					whitesColorName = "White";
                 }
 
                 redrawBoard();
-                display.setText("White is up first!");  //tells the user who is up first
+				playerTurn = true;
+				display.setText("It is " + whitesColorName + "'s Turn");  //tells the user who is up first
             }
 
             else if(e.getSource() == loadGame) //when load game is clicked
@@ -348,6 +361,9 @@ public class Chess {
                     theButtons[i][j].setEnabled(true);
                 }
             }
+			//displays whose turn it is
+			if(playerTurn) display.setText("It is " + whitesColorName + "'s Turn"); 
+			else display.setText("It is " + blacksColorName + "'s Turn");
         }
 
 
@@ -356,14 +372,29 @@ public class Chess {
         public boolean makeMove(int r1, int c1, int r2, int c2) {
             // TODO: make sure the piece belongs to the player
             Piece p = board.getSpacePiece(r1, c1);
-            if (p == null) return false;  // if a piece was clicked on
-            if (p.move(board, r2, c2)) {   // if the move is valid
-                boolean capture = !board.spaceIsEmpty(r2, c2);
-                board.removeFromSpace(r2, c2, capture);
-                board.removeFromSpace(r1, c1, false);
-                board.addToSpace(r2, c2, p);
-                return true;
-            }
+			if (p == null) return false;  // if a piece was clicked on
+			//checks whose turn it is
+			if((playerTurn && p.isWhite()) || (!playerTurn && !p.isWhite())){
+				if (p.move(board, r2, c2)) {   // if the move is valid
+					boolean capture = !board.spaceIsEmpty(r2, c2);
+					board.removeFromSpace(r2, c2, capture);
+					board.removeFromSpace(r1, c1, false);
+					board.addToSpace(r2, c2, p);
+					playerTurn = !playerTurn;
+					return true;
+				}
+			}
+			else{
+				//if not the user's turn. Alert user as such
+				String alertMessage;
+				if(playerTurn){
+					alertMessage = "It is " + whitesColorName + "'s turn.";
+				}
+				else{
+					alertMessage = "It is " + blacksColorName + "'s turn.";
+				}
+				JOptionPane.showMessageDialog(frame, alertMessage, "Warning", JOptionPane.WARNING_MESSAGE);
+			}
             return false;
         }
 
