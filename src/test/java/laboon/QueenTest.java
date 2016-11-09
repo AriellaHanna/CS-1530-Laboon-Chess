@@ -18,8 +18,8 @@ public class QueenTest{
 	// Add a Queen to E5
 	@Before
 	public void addQueen(){
-		queen = new Queen(true,4,4);
-		board.addToSpace(4,4, queen);
+		queen = new Queen(true,3,4);
+		board.addToSpace(3,4, queen);
 	}
 	
 	// Remove the queen from the board
@@ -31,66 +31,66 @@ public class QueenTest{
 	// Test queen to E6
 	@Test
 	public void testQueenMoveUp() {
-		assertTrue(queen.move(board,5,4));
+		assertTrue(queen.move(board,2,4));
 	}
 	
 	// Test queen to E4
 	@Test
 	public void testQueenMoveDown() {
-		assertTrue(Chess.queen.move(board,3,4));
+		assertTrue(queen.move(board,4,4));
 	}
 	
 	// Test queen to F5
 	@Test
 	public void testQueenMoveRight() {
-		assertTrue(queen.move(board,4,5));
+		assertTrue(queen.move(board,3,5));
 	}
 	
 	// Test queen to D5
 	@Test
 	public void testQueenMoveLeft() {
-		assertTrue(queen.move(board,4,3));
+		assertTrue(queen.move(board,3,3));
 	}
 	
 	// Test queen to F6
 	@Test
 	public void testQueenMoveUpAndRight() {
-		assertTrue(queen.move(board, 5,5));
+		assertTrue(queen.move(board, 2,5));
 	}	
 	
 	// Test queen to D6
 	@Test
 	public void testQueenMoveUpAndLeft() {
-		assertTrue(queen.move(board,5,3));
+		assertTrue(queen.move(board,2,3));
 	}		
 	
 	// Test queen to F4
 	@Test
 	public void testQueenMoveDownAndRight() {
-		assertTrue(queen.move(board,3,5));
+		assertTrue(queen.move(board,4,5));
 	}	
 	
 	// Test queen to D4
 	@Test
 	public void testQueenMoveDownAndLeft() {
-		assertTrue(queen.move(board,3,3));
+		assertTrue(queen.move(board,4,3));
 	}
 	
 	// Test queen to E7, capture pawn
 	@Test
 	public void testQueenCapture(){
-		assertTrue(queen.move(board,6,4));
+		assertTrue(queen.move(board,1,4));
 	}
-	// Test queen to E8, fail because enemy pawn in the way
+	// Test queen to B1, fail because enemy pawn in the way
 	@Test
 	public void testQueenEnemyCollision(){
-		assertFalse(queen.move(board,7,7));
+		assertFalse(queen.move(board,0,1));
 	}
 	
 	// Test queen to E1, fail because ally in the way
 	@Test
 	public void testQueenAllyCollision(){
-		assertFalse(queen.move(board,0,4));
+		assertFalse(queen.move(board,7,4));
 	}
 	
 }

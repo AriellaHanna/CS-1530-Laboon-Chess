@@ -4,6 +4,8 @@ public abstract class Piece {
 	private boolean white; //True if white, false if black
 	private int r; //Row piece is in
 	private int c; //Column piece is in
+	private final int originC; //Orignal column position
+	private final int originR; //Orignal row position
 	protected String symbol; // Letter representing the piece on the board
 
 	//Constructor
@@ -11,6 +13,8 @@ public abstract class Piece {
 		white = color;
 		r = row;
 		c = column;
+		originC = column;
+		originR = row;
 	}
 
 	// Move the piece, return true if completed, false if illegal
@@ -44,5 +48,15 @@ public abstract class Piece {
 	// Getter for the symbol
 	public String getSymbol() {
 		return symbol;
+	}
+	
+	//Getter for origin column
+	public int getOriginC(){
+		return originC;
+	}
+	
+	//Getter for origin row
+	public int getOriginR(){
+		return originR;
 	}
 }
