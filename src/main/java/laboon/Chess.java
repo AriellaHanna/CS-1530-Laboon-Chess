@@ -36,6 +36,10 @@ public class Chess {
     private Color whitesColor = Color.WHITE;
 	private String whitesColorName = "White";
 	private boolean playerTurn = true;
+	private int turnNumber = 0;
+	private String move;
+	private String[] player1Moves = new String[20];
+	private String[] player2Moves = new String[20];;
 
     
 
@@ -380,20 +384,14 @@ public class Chess {
 					board.removeFromSpace(r2, c2, capture);
 					board.removeFromSpace(r1, c1, false);
 					board.addToSpace(r2, c2, p);
-					playerTurn = !playerTurn;
+					addMoveToList(p, c2, r2);
+					playerTurn = !playerTurn;					
 					return true;
 				}
 			}
 			else{
 				//if not the user's turn. Alert user as such
-				String alertMessage;
-				if(playerTurn){
-					alertMessage = "It is " + whitesColorName + "'s turn.";
-				}
-				else{
-					alertMessage = "It is " + blacksColorName + "'s turn.";
-				}
-				JOptionPane.showMessageDialog(frame, alertMessage, "Warning", JOptionPane.WARNING_MESSAGE);
+				printTurnAlert();
 			}
             return false;
         }
@@ -422,7 +420,7 @@ public class Chess {
                 System.out.println("Unable to open file");
             }
         }
-        //Writes a PGN file
+        // Writes a PGN file
         public void savePGN(File file){
             try{
                 PrintWriter writer = new PrintWriter(file);
@@ -431,18 +429,58 @@ public class Chess {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 Date date = new Date();
                 String d = "[Date \""+dateFormat.format(date)+"\"]";
-                String white = "[White \"Player\"]";
-                String black = "[Black \"Computer\"]";
+                String white = "[" + whitesColorName + " \"Player\"]";
+                String black = "[" + blacksColorName + " \"Computer\"]";
+				String result = "[Result]";
 
                 //writes the header of the PGN file
-                writer.println(event+"\n"+site+"\n"+d+"\n"+white+"\n"+black);
+                writer.println(event+"\n"+site+"\n"+d+"\n"+white+"\n"+black+"\n"+result+"\n\n");
+				for(int i = 0; i < turnNumber; i++){
+					if(player2Moves[i] != null){
+						writer.print((i+1)+"."+player1Moves[i]+" "+player2Moves[i]+" ");
+					}
+					else{
+						writer.print((i+1)+"."+player1Moves[i]+" ");						
+					}
+				}
                 writer.close();
             }
             catch(FileNotFoundException ex) {
                 System.out.println("Unable to open file");
             }
 
-        }
-
+        }		
+		// prints out alert message if it is not the player's turn	
+		public void printTurnAlert(){
+			String alertMessage;
+			if(playerTurn){
+				alertMessage = "It is " + whitesColorName + "'s turn.";
+			}
+			else{
+				alertMessage = "It is " + blacksColorName + "'s turn.";
+			}
+			JOptionPane.showMessageDialog(frame, alertMessage, "Warning", JOptionPane.WARNING_MESSAGE);
+		}		
+		
+		/*takes the piece being moved and the destination of move. Then composes
+		the a string of the move based on PGN notation
+		params:
+			Piece p:	piece being moved
+			int c2:		destination column
+			int r2:		destination row*/
+		public void addMoveToList(Piece p, int c2, int r2){
+			//Composes move based on PGN notation
+			if(p.getSymbol().equals("Kn")) move = "N";
+			else if(p.getSymbol().equals("P")) move = "";
+			else move = p.getSymbol();
+			move = move + letters[c2].getText() + numbers[r2].getText();
+			if(playerTurn){
+				turnNumber++;
+				player1Moves[turnNumber-1] = move;
+			}
+			else{
+				player2Moves[turnNumber-1] = move;
+			}
+		}
     }
 }
