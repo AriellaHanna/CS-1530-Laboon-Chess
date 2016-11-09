@@ -37,7 +37,7 @@ public class QueenTest{
 	// Test queen to E4
 	@Test
 	public void testQueenMoveDown() {
-		assertTrue(Chess.queen.move(board,3,4));
+		assertTrue(queen.move(board,3,4));
 	}
 	
 	// Test queen to F5

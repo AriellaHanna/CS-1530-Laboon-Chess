@@ -15,7 +15,7 @@ public class KingTest{
 	public static void createBoard(){
 		board = new Board();
 	}
-	// Add a King to E5
+	// Add a King to E4
 	@Before
 	public void addKing(){
 		king = new King(true,4,4);
@@ -28,66 +28,67 @@ public class KingTest{
 		board.removeFromSpace(king.getRow(),king.getCol(),false);
 	}
 	
-	// Test king to E6
+	// Test king to E5
 	@Test
 	public void testKingMoveUp() {
-		assertTrue(king.move(board, 5, 4));
+		assertTrue(king.move(board, 3, 4));
 	}
 	
-	// Test king to E4
+	// Test king to E3
 	@Test
 	public void testKingMoveDown() {
-		assertTrue(king.move(board,3,4));
+		assertTrue(king.move(board,5,4));
 	}
 	
-	// Test king to F5
+	// Test king to F4
 	@Test
 	public void testKingMoveRight() {
 		assertTrue(king.move(board,4,5));
 	}
 	
-	// Test king to D5
+	// Test king to D4
 	@Test
 	public void testKingMoveLeft() {
 		assertTrue(king.move(board,4,3));
 	}
 	
-	// Test king to F6
+	// Test king to F5
 	@Test
 	public void testKingMoveUpAndRight() {
-		assertTrue(king.move(board,5,5));
-	}	
-	
-	// Test king to D6
-	@Test
-	public void testKingMoveUpAndLeft() {
-		assertTrue(king.move(board,5,3));
-	}		
-	
-	// Test king to F4
-	@Test
-	public void testKingMoveDownAndRight() {
 		assertTrue(king.move(board,3,5));
 	}	
 	
-	// Test king to D4
+	// Test king to D5
+	@Test
+	public void testKingMoveUpAndLeft() {
+		assertTrue(king.move(board,3,3));
+	}		
+	
+	// Test king to F3
+	@Test
+	public void testKingMoveDownAndRight() {
+		assertTrue(king.move(board,5,5));
+	}	
+	
+	// Test king to D3
 	@Test
 	public void testKingMoveDownAndLeft() {
-		assertTrue(king.move(board,3,3));
+		assertTrue(king.move(board,5,3));
 	}
 	
-	// Test king taking pawn at G7
+	// Test king taking pawn at E7
 	@Test
 	public void testKingCapture(){
-		king.move(board,5,5);
-		assertTrue(king.move(board,6,6));
+		king.move(board,3,4);
+		king.move(board,2,4);
+		assertTrue(king.move(board,1,4));
 	}
 	
 	// Test king trying to share space with pawn at A2
 	@Test
 	public void testKingCollision(){
-		king = new King(true,2,0);
-		board.addToSpace(2,0, king);
-		assertFalse(king.move(board,1,0));
+		king = new King(true,5,0);
+		board.addToSpace(5,0, king);
+		assertFalse(king.move(board,6,0));
 	}	
 }
