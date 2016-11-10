@@ -20,6 +20,13 @@ public abstract class Piece {
 	// Move the piece, return true if completed, false if illegal
 	public abstract boolean move(Board board, int row, int column);
 
+	// Undos a move, currently only happens when a move causes check
+	public void undo(Board board, int r, int c, Piece piece){
+		board.removeFromSpace(getRow(),getCol(),false);
+		board.addToSpace(r,c,this);
+		if (piece != null)
+			board.addToSpace(piece.getRow(), piece.getCol(), piece);
+	}
 	// Getter for the row
 	public int getRow() {
 		return r;

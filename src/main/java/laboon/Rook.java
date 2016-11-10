@@ -13,15 +13,27 @@ public class Rook extends Piece {
 		if (clearPath(board, row, column)&&(getCol() == column ^ getRow() == row))
 		{
 			board.removeFromSpace(getRow(),getCol(),false); //Remove piece from old destination
+			int oldRow = getRow();
+			int oldCol = getCol();
+			Piece savedPiece = null;
 			if (capture(board, row, column))
 			{
 				
-				board.removeFromSpace(row,column,true); //Remove captured piece
+				savedPiece = board.removeFromSpace(row,column, true); //Remove captured piece
 			}
 			board.addToSpace(row,column, this); //Move piece to new space
 			setCol(column);
 			setRow(row);
-			return true;
+			if (isWhite() && board.whiteCheck()){
+				undo(board, oldRow,oldCol,savedPiece);
+				return false;
+			}
+			else if (!isWhite() && board.blackCheck()){
+				undo(board, oldRow,oldCol,savedPiece);
+				return false;
+			}
+			else
+				return true;
 		}
 		else
 			return false;

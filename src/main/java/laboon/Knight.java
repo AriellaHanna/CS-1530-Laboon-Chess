@@ -12,15 +12,28 @@ public class Knight extends Piece {
 		if ((Math.abs(column-getCol())==2 && Math.abs(row-getRow())==1)^(Math.abs(column-getCol())==1 && Math.abs(row-getRow())==2)
 			&& (capture(board, row, column) || board.spaceIsEmpty(row,column)))
 		{
-			board.removeFromSpace(getRow(),getCol(),false);
-			if (capture(board,row,column))
+			board.removeFromSpace(getRow(),getCol(),false); //Remove piece from old destination
+			int oldRow = getRow();
+			int oldCol = getCol();
+			Piece savedPiece = null;
+			if (capture(board, row, column))
 			{
-				board.removeFromSpace(row,column,true);
+				
+				savedPiece = board.removeFromSpace(row,column, true); //Remove captured piece
 			}
-			board.addToSpace(row,column,this);
+			board.addToSpace(row,column, this); //Move piece to new space
 			setCol(column);
 			setRow(row);
-			return true;
+			if (isWhite() && board.whiteCheck()){
+				undo(board, oldRow,oldCol,savedPiece);
+				return false;
+			}
+			else if (!isWhite() && board.blackCheck()){
+				undo(board, oldRow,oldCol,savedPiece);
+				return false;
+			}
+			else
+				return true;
 		}
 		else
 			return false;

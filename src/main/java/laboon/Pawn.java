@@ -14,24 +14,37 @@ public class Pawn extends Piece {
             ^(!isWhite() && blackMove(board,row,column)))
         {
             board.removeFromSpace(getRow(),getCol(),false); //Remove piece from old destination
+            int oldRow = getRow();
+            int oldCol = getCol();
+            Piece savedPiece = null;
             // Remove captured piece
             if (capture(board, row, column))
             {
                 if (enPassant(board,row,column))
                 {
                     if (isWhite())
-                        board.removeFromSpace(row+1,column,true);
+                        savedPiece = board.removeFromSpace(row+1,column,true);
                     else
-                    board.removeFromSpace(row-1,column,true);
+                    savedPiece = board.removeFromSpace(row-1,column,true);
                 }
                 else
-                    board.removeFromSpace(row,column,true);
+                   savedPiece = board.removeFromSpace(row,column,true);
             }
             board.addToSpace(row,column, this); //Move piece to new space
             setCol(column);
             setRow(row);
-            setMoved(true);
-            return true;
+            if (isWhite() && board.whiteCheck()){
+				undo(board, oldRow,oldCol,savedPiece);
+				return false;
+			}
+			else if (!isWhite() && board.blackCheck()){
+				undo(board, oldRow,oldCol,savedPiece);
+				return false;
+			}
+			else
+            {	setMoved(true);
+            	return true;
+            }
         }
         else
             return false;
