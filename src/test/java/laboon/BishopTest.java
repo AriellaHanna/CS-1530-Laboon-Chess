@@ -51,11 +51,10 @@ public class BishopTest{
 		assertTrue(bishop.move(board,5,3));
 	}
 	
-	// Test bishop move to C2, should be false since ally pawn is there
+	// Test bishop move to G2, should be false since ally pawn is there
 	@Test
 	public void testBishopMoveToAlly() {
-		assertFalse(bishop.move(board,6,2));
-	}
+		assertFalse(bishop.move(board,6,6));	}
 	
 	// Test bishop move to A8, should be false since enemy pawn is blocking the path
 	@Test
@@ -63,8 +62,8 @@ public class BishopTest{
 		assertFalse(bishop.move(board,0,0));
 	}
 	
-	// Test bishop move to H7, should be true because enemy pawn is capturable
+	// Test bishop move to B7, should be true because enemy pawn is capturable
 	public void testBishopCaptureEnemy() {
-		assertTrue(bishop.move(board,1,7));
+		assertTrue(bishop.move(board,1,1));
 	}
 }

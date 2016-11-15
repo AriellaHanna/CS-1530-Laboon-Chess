@@ -18,8 +18,8 @@ public class KnightTest{
 	// Add a Knight to E4
 	@Before
 	public void addKnight(){
-		knight = new Knight(true,4,4);
-		board.addToSpace(4,4, knight);
+		knight = new Knight(true,3,4);
+		board.addToSpace(3,4, knight);
 	}
 	
 	@After
@@ -30,65 +30,56 @@ public class KnightTest{
 	// Test knight to F6
 	@Test
 	public void testKnightMoveUpAndRight() {
-		assertTrue(knight.move(board,2,5));
+		assertTrue(knight.move(board,1,5));
 	}
 	
 	// Test knight to D6
 	@Test
 	public void testKnightMoveUpAndLeft() {
-		assertTrue(knight.move(board,2,3));
+		assertTrue(knight.move(board,1,3));
 	}	
 	
 	// Test knight from B6 to A4
 	@Test
 	public void testKnightMoveDownAndLeft() {
-		knight = new Knight(true,2,1);
-		board.addToSpace(2,1, knight);
-		assertTrue(knight.move(board,4,0));
+		assertTrue(knight.move(board,5,3));
 	}
 	
 	// Test knight from B6 to C4
 	@Test
 	public void testKnightMoveDownAndRight() {
-		knight = new Knight(true,2,1);
-		board.addToSpace(2,1, knight);
-		assertTrue(knight.move(board,4,2));
+		assertTrue(knight.move(board,5,5));
 	}
 	
 	// Test knight to C5
 	@Test
 	public void testKnightMoveLeftAndUp() {
-		assertTrue(knight.move(board,3,2));
+		assertTrue(knight.move(board,2,2));
 	}	
 	
 	// Test knight to C3
 	@Test
 	public void testKnightMoveLeftAndDown() {
-		assertTrue(knight.move(board,5,2));
+		assertTrue(knight.move(board,4,2));
 	}	
 	
 	// Test knight to G5
 	@Test
 	public void testKnightMoveRightAndUp() {
-		assertTrue(knight.move(board,3,6));
+		assertTrue(knight.move(board,2,6));
 	}
 	
 	// Test knight to G3
 	@Test
 	public void testKnightMoveRightAndDown() {
-		assertTrue(knight.move(board,5,6));
+		assertTrue(knight.move(board,4,6));
 	}
 	
 	// Test knight to D2, fails because ally pawn is there
 	@Test
 	public void testKnightCollision() {
-		assertFalse(knight.move(board,1,3));
-	}
-	
-	// Test knight capture of Bishiop at C8 (moves to D6 first)
-	@Test
-	public void testKnightCapture(){
-		knight.move(board,2,3);
-		assertTrue(knight.move(board,0,2));
+		knight = new Knight(true,5,0);
+		board.addToSpace(5,0,knight);
+		assertFalse(knight.move(board,7,1));
 	}
 }

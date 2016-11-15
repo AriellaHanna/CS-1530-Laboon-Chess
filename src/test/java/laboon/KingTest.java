@@ -84,11 +84,23 @@ public class KingTest{
 		assertTrue(king.move(board,1,4));
 	}
 	
-	// Test king trying to share space with pawn at A2
+	// Test king trying to share space with pawn at E2
 	@Test
 	public void testKingCollision(){
-		king = new King(true,5,0);
-		board.addToSpace(5,0, king);
-		assertFalse(king.move(board,6,0));
+		king.move(board,5,4);
+		assertFalse(king.move(board,6,4));
+	}
+	
+	// Test check function
+	@Test
+	public void testCheck(){
+		board.removeFromSpace(king.getRow(),king.getCol(),false);
+		king = board.getWhiteKing();
+		board.removeFromSpace(6,4,false);
+		king.move(board,5,4);
+		king.move(board,4,4);
+		king.move(board,3,4);
+		assertFalse(king.move(board,2,4));
+		board.addToSpace(6,4, new Pawn(true,6,4));
 	}	
 }
