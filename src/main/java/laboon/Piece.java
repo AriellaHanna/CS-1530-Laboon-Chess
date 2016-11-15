@@ -24,6 +24,8 @@ public abstract class Piece {
 	public void undo(Board board, int r, int c, Piece piece){
 		board.removeFromSpace(getRow(),getCol(),false);
 		board.addToSpace(r,c,this);
+		setRow(r);
+		setRow(c);
 		if (piece != null)
 			board.addToSpace(piece.getRow(), piece.getCol(), piece);
 	}
