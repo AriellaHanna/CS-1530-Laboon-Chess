@@ -43,9 +43,9 @@ public class Bishop extends Piece {
 	// Checks if path is clear for move
 	private boolean clearPath(Board board, int row, int column) {
 		//Moving up and right
-		if (row > getRow() && column > getCol())
+		if (row < getRow() && column > getCol())
 		{
-			for (int y = getRow()+1, x = getCol()+1; x <= column && y <= row; x++, y++)
+			for (int y = getRow()-1, x = getCol()+1; x <= column && y >= row; x++, y--)
 			{
 				// There is a piece on the path
 				if (!board.spaceIsEmpty(y,x))
@@ -59,9 +59,9 @@ public class Bishop extends Piece {
 			return true;
 		}
 		//Moving down and right
-		else if (row < getRow() && column > getCol())
+		else if (row > getRow() && column > getCol())
 		{
-			for (int y = getRow()-1, x = getCol()+1; x <= column && y >= row; x++, y--)
+			for (int y = getRow()+1, x = getCol()+1; x <= column && y <= row; x++, y++)
 			{
 				// There is a piece on the path
 				if (!board.spaceIsEmpty(y,x))
@@ -73,9 +73,9 @@ public class Bishop extends Piece {
 			return true;
 		}
 		//Moving up and left
-		else if (row > getRow() && column < getCol())
+		else if (row < getRow() && column < getCol())
 		{
-			for (int y = getRow()+1, x = getCol()-1; x >= column && y <= column; x--, y++)
+			for (int y = getRow()-1, x = getCol()-1; x >= column && y >= column; x--, y--)
 			{
 				// There is a piece on the path
 				if (!board.spaceIsEmpty(y,x))
@@ -89,7 +89,7 @@ public class Bishop extends Piece {
 		//Moving down and left
 		else
 		{
-			for (int x = getRow()-1, y = getCol()-1; x >= row && y >= column; x--, y--)
+			for (int y = getRow()+1, x = getCol()-1; y <= row && x >= column; x--, y++)
 			{
 				// There is a piece on the path
 				if (!board.spaceIsEmpty(y,x))
