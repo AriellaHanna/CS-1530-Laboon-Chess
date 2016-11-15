@@ -41,7 +41,8 @@ public class Queen extends Piece {
 
 	//Check if diagonal movement
 	private boolean moveDiagonal(Board board, int row, int column) {
-		return (Math.abs(column-getCol()) == Math.abs(row-getRow())&&clearDiagonal(board,row,column));
+		return (Math.abs(column-getCol())!=0 &&Math.abs(column-getCol()) == Math.abs(row-getRow())
+				&&clearDiagonal(board,row,column));
 	}
 
 	//Check if straight movement

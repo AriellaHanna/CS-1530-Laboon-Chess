@@ -10,7 +10,8 @@ public class Bishop extends Piece {
 
 	public boolean move(Board board, int row, int column) {
 		//rise over run = |1| and there are no pieces in the path
-		if (Math.abs(column-getCol()) == Math.abs(row-getRow()) && clearPath(board, row, column))
+		if (Math.abs(column-getCol())!=0 &&Math.abs(column-getCol()) == Math.abs(row-getRow())
+		 && clearPath(board, row, column))
 		{
 			board.removeFromSpace(getRow(),getCol(),false); //Remove piece from old destination
 			int oldRow = getRow();
