@@ -89,5 +89,18 @@ public class KingTest{
 	public void testKingCollision(){
 		king.move(board,5,4);
 		assertFalse(king.move(board,6,4));
+	}
+	
+	// Test check function
+	@Test
+	public void testCheck(){
+		board.removeFromSpace(king.getRow(),king.getCol(),false);
+		king = board.getWhiteKing();
+		board.removeFromSpace(6,4,false);
+		king.move(board,5,4);
+		king.move(board,4,4);
+		king.move(board,3,4);
+		assertFalse(king.move(board,2,4));
+		board.addToSpace(6,4, new Pawn(true,6,4));
 	}	
 }

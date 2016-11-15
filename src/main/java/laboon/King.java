@@ -54,70 +54,70 @@ public class King extends Piece {
 	
 	// This will test if the king is currently in check, always false for now
 	public boolean inCheck(Board board){
-		return !diagonalSafe(board) || !straightSafe(board)/* || knightThreat(board)*/;
+		return (!diagonalSafe(board) || !straightSafe(board) || !knightSafe(board));
 	}
 	
 	//Check if king is threatened diagonally
 	private boolean diagonalSafe(Board board){
 		// Up and right
-		for (int y = getRow(), x = getCol(); y >= 0 && x <= 7; y--, x++)
+		for (int y = getRow()-1, x = getCol()+1; y >= 0 && x <= 7; y--, x++)
 		{
 			//Ally piece is protecting diagonal path
 			if (!board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x) == isWhite())
 				break;
 			// Queen or Bishop can capture King
 			if (!board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x) != isWhite() &&
-			(board.getSpacePiece(y,x).getSymbol() == "B" || board.getSpacePiece(y,x).getSymbol() == "Q"))
+			(board.getSpacePiece(y,x).getSymbol().equals("B") || board.getSpacePiece(y,x).getSymbol().equals("Q")))
 				return false;
 			// Enemy pawn can capture King
-			if (isWhite() && y == getRow()-1 && !board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x)
-			&& board.getSpacePiece(y,x).getSymbol() == "P")
+			if (isWhite() && y == getRow()-1 && !board.spaceIsEmpty(y,x) && !board.getSpaceColor(y,x)
+			&& board.getSpacePiece(y,x).getSymbol().equals("P"))
 				return false;
 
 		}
 		// Up and left
-		for (int y = getRow(), x = getCol(); y >= 0 && x >= 0; y--, x--)
+		for (int y = getRow()-1, x = getCol()-1; y >= 0 && x >= 0; y--, x--)
 		{
 			//Ally piece is protecting diagonal path
 			if (!board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x) == isWhite())
 				break;
 			// Queen or Bishop can capture King
 			if (!board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x) != isWhite() &&
-			(board.getSpacePiece(y,x).getSymbol() == "B" || board.getSpacePiece(y,x).getSymbol() == "Q"))
+			(board.getSpacePiece(y,x).getSymbol().equals("B") || board.getSpacePiece(y,x).getSymbol().equals("Q")))
 				return false;
 			// Enemy pawn can capture King
-			if (isWhite() && y == getRow()-1 && !board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x)
-			&& board.getSpacePiece(y,x).getSymbol() == "P")
+			if (isWhite() && y == getRow()-1 && !board.spaceIsEmpty(y,x) && !board.getSpaceColor(y,x)
+			&& board.getSpacePiece(y,x).getSymbol().equals("P"))
 				return false;
 		}
 		// Down and left
-		for (int y = getRow(), x = getCol(); y <= 7 && x >=0; y++, x--)
+		for (int y = getRow()+1, x = getCol()-1; y <= 7 && x >=0; y++, x--)
 		{
 			//Ally piece is protecting diagonal path
 			if (!board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x) == isWhite())
 				break;
 			// Queen or Bishop can capture King
 			if (!board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x) != isWhite() &&
-			(board.getSpacePiece(y,x).getSymbol() == "B" || board.getSpacePiece(y,x).getSymbol() == "Q"))
+			(board.getSpacePiece(y,x).getSymbol().equals("B") || board.getSpacePiece(y,x).getSymbol().equals("Q")))
 				return false;
 			// Enemy pawn can capture King
 			if (!isWhite() && y == getRow()+1 && !board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x)
-			&& board.getSpacePiece(y,x).getSymbol() == "P")
+			&& board.getSpacePiece(y,x).getSymbol().equals("P"))
 				return false;
 		}
 		// Down and right
-		for (int y = getRow(), x = getCol(); y <= 7 && x <= 7; y++, x++)
+		for (int y = getRow()+1, x = getCol()+1; y <= 7 && x <= 7; y++, x++)
 		{
 			//Ally piece is protecting diagonal path
 			if (!board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x) == isWhite())
 				break;
 			// Queen or Bishop can capture King
 			if (!board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x) != isWhite() &&
-			(board.getSpacePiece(y,x).getSymbol() == "B" || board.getSpacePiece(y,x).getSymbol() == "Q"))
+			(board.getSpacePiece(y,x).getSymbol().equals("B") || board.getSpacePiece(y,x).getSymbol().equals("Q")))
 				return false;
 			// Enemy pawn can capture King
 			if (!isWhite() && y == getRow()+1 && !board.spaceIsEmpty(y,x) && board.getSpaceColor(y,x)
-			&& board.getSpacePiece(y,x).getSymbol() == "P")
+			&& board.getSpacePiece(y,x).getSymbol().equals("P"))
 				return false;
 		}
 		return true;
@@ -126,79 +126,69 @@ public class King extends Piece {
 	//Check if king is threatened horizontally or vertically
 	private boolean straightSafe(Board board){
 		//Up
-		for (int y = getRow(); y >=0; y--){
+		for (int y = getRow()-1; y >=0; y--){
 			//Ally piece is blocking path
 			if (!board.spaceIsEmpty(y,getCol()) && board.getSpaceColor(y,getCol()) == isWhite())
 				break;
 			//King is threatened by Rook or Queen
 			if (!board.spaceIsEmpty(y,getCol()) && board.getSpaceColor(y,getCol()) != isWhite() &&
-			(board.getSpacePiece(y,getCol()).getSymbol() == "R" || board.getSpacePiece(y,getCol()).getSymbol() == "Q"))
+			(board.getSpacePiece(y,getCol()).getSymbol().equals("R") || board.getSpacePiece(y,getCol()).getSymbol().equals("Q")))
 				return false;
 		}
 		//Down
-		for (int y = getRow(); y <=7; y++){
+		for (int y = getRow()+1; y <=7; y++){
 			//Ally piece is blocking path
 			if (!board.spaceIsEmpty(y,getCol()) && board.getSpaceColor(y,getCol()) == isWhite())
 				break;
 			//King is threatened by Rook or Queen
 			if (!board.spaceIsEmpty(y,getCol()) && board.getSpaceColor(y,getCol()) != isWhite() &&
-			(board.getSpacePiece(y,getCol()).getSymbol() == "R" || board.getSpacePiece(y,getCol()).getSymbol() == "Q"))
-				return false;
-		}
-				//Up
-		for (int y = getRow(); y >=0; y--){
-			//Ally piece is blocking path
-			if (!board.spaceIsEmpty(y,getCol()) && board.getSpaceColor(y,getCol()) == isWhite())
-				break;
-			//King is threatened by Rook or Queen
-			if (!board.spaceIsEmpty(y,getCol()) && board.getSpaceColor(y,getCol()) != isWhite() &&
-			(board.getSpacePiece(y,getCol()).getSymbol() == "R" || board.getSpacePiece(y,getCol()).getSymbol() == "Q"))
+			(board.getSpacePiece(y,getCol()).getSymbol().equals("R") || board.getSpacePiece(y,getCol()).getSymbol().equals("Q")))
 				return false;
 		}
 		//Right
-		for (int x = getCol(); x <=7; x++){
+		for (int x = getCol()+1; x <=7; x++){
 			//Ally piece is blocking path
 			if (!board.spaceIsEmpty(getRow(),x) && board.getSpaceColor(getRow(),x) == isWhite())
 				break;
 			//King is threatened by Rook or Queen
 			if (!board.spaceIsEmpty(getRow(),x) && board.getSpaceColor(getRow(),x) != isWhite() &&
-			(board.getSpacePiece(getRow(),x).getSymbol() == "R" || board.getSpacePiece(getRow(),x).getSymbol() == "Q"))
+			(board.getSpacePiece(getRow(),x).getSymbol().equals("R") || board.getSpacePiece(getRow(),x).getSymbol().equals("Q")))
 				return false;
 		}
 		//Left
-		for (int x = getCol(); x >=0; x--){
+		for (int x = getCol()-1; x >=0; x--){
 			//Ally piece is blocking path
 			if (!board.spaceIsEmpty(getRow(),x) && board.getSpaceColor(getRow(),x) == isWhite())
 				break;
 			//King is threatened by Rook or Queen
 			if (!board.spaceIsEmpty(getRow(),x) && board.getSpaceColor(getRow(),x) != isWhite() &&
-			(board.getSpacePiece(getRow(),x).getSymbol() == "R" || 
-			board.getSpacePiece(getRow(),x).getSymbol() == "Q"))
+			(board.getSpacePiece(getRow(),x).getSymbol().equals("R") || 
+			board.getSpacePiece(getRow(),x).getSymbol().equals("Q")))
 				return false;
 		}
 		return true;
 	}
-/*	
+	
 	//Check if king is threatened by a knight
-	private boolean knightThreat(Board board){
+	private boolean knightSafe(Board board){
 		// Checks all possible positions where an enemy knight could capture a king
-		return ((!board.spaceIsEmpty(getRow()+2,getCol()+1) && 
-		board.getSpaceColor(getRow()+2,getCol()+1) != isWhite() && 
-		board.getSpacePiece(getRow()+2,getCol()+1).getSymbol() == "Kn") ||
-		(!board.spaceIsEmpty(getRow()+2,getCol()-1) && board.getSpaceColor(getRow()+2,getCol()-1) 
-		!= isWhite() && board.getSpacePiece(getRow()+2,getCol()-1).getSymbol() == "Kn") || 
-		(!board.spaceIsEmpty(getRow()-2,getCol()-1) && board.getSpaceColor(getRow()-2,getCol()-1) 
-		!= isWhite() && board.getSpacePiece(getRow()-2,getCol()-1).getSymbol() == "Kn") ||
-		(!board.spaceIsEmpty(getRow()-2,getCol()+1) && board.getSpaceColor(getRow()-2,getCol()+1) 
-		!= isWhite() && board.getSpacePiece(getRow()-2,getCol()+1).getSymbol() == "Kn") || 
-		(!board.spaceIsEmpty(getRow()+1,getCol()+2) && board.getSpaceColor(getRow()+1,getCol()+2) 
-		!= isWhite() && board.getSpacePiece(getRow()+1,getCol()+2).getSymbol() == "Kn") || 
-		(!board.spaceIsEmpty(getRow()-1,getCol()+2) && board.getSpaceColor(getRow()-1,getCol()+2) 
-		!= isWhite() && board.getSpacePiece(getRow()-1,getCol()+2).getSymbol() == "Kn")|| 
-		(!board.spaceIsEmpty(getRow()+1,getCol()-2) && board.getSpaceColor(getRow()+1,getCol()-2) 
-		!= isWhite() && board.getSpacePiece(getRow()+1,getCol()-2).getSymbol() == "Kn")|| 
-		(!board.spaceIsEmpty(getRow()-1,getCol()-2) && board.getSpaceColor(getRow()-1,getCol()-2) 
-		!= isWhite() && board.getSpacePiece(getRow()-1,getCol()-2).getSymbol() == "Kn"));
+		Piece[] knightSpaces = new Piece[8];
+		knightSpaces[0] = board.getSpacePiece(getRow()+2,getCol()+1);
+		knightSpaces[1] = board.getSpacePiece(getRow()+2,getCol()-1);
+		knightSpaces[2] = board.getSpacePiece(getRow()+1,getCol()+2);
+		knightSpaces[3] = board.getSpacePiece(getRow()+1,getCol()-2);
+		knightSpaces[4] = board.getSpacePiece(getRow()-2,getCol()+1);
+		knightSpaces[5] = board.getSpacePiece(getRow()-2,getCol()-1);
+		knightSpaces[6] = board.getSpacePiece(getRow()-1,getCol()+2);
+		knightSpaces[7] = board.getSpacePiece(getRow()-1,getCol()-2);
+		for (int i = 0; i <8; i++)
+		{
+			//There is a knight that could take the king from its position
+			if (knightSpaces[i] != null && knightSpaces[i].isWhite()!=isWhite()
+			 && knightSpaces[i].getSymbol().equals("Kn"))
+				return false;
+		}
+		// There are no knights in position to take the king
+		return true;
 	}
-*/
 }
