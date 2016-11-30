@@ -39,7 +39,9 @@ public class Chess {
 	private int turnNumber = 0;
 	private String move;
 	private String[] player1Moves = new String[20];
-	private String[] player2Moves = new String[20];;
+	private String[] player2Moves = new String[20];
+	private String[] numberText = new String[8];
+	private String[] letterText = new String[9];
 
     
 
@@ -65,6 +67,9 @@ public class Chess {
         numbers[5] = new JLabel("3", JLabel.CENTER);
         numbers[6] = new JLabel("2", JLabel.CENTER);
         numbers[7] = new JLabel("1", JLabel.CENTER);
+		for(int i = 0; i < 8; i++){
+			numberText[i] = Integer.toString(8-i);
+		}
         letters = new JLabel[9];
         letters[0] = new JLabel("", JLabel.CENTER);
         letters[1] = new JLabel("A", JLabel.CENTER);
@@ -75,6 +80,15 @@ public class Chess {
         letters[6] = new JLabel("F", JLabel.CENTER);
         letters[7] = new JLabel("G", JLabel.CENTER);
         letters[8] = new JLabel("H", JLabel.CENTER);
+		letterText[0] = "";
+		letterText[1] = "a";
+		letterText[2] = "b";
+		letterText[3] = "c";
+		letterText[4] = "d";
+		letterText[5] = "e";
+		letterText[6] = "f";
+		letterText[7] = "g";
+		letterText[8] = "h";
         theButtons = new JButton[game][game];   //creates the game buttons
         newGame = new JButton("New Game");  //creates a new game button
         loadGame = new JButton("Load Game"); //loads an existing game
@@ -95,7 +109,7 @@ public class Chess {
         lowerPanel.setLayout(new FlowLayout(game)); //See comment in the line above
         middlePanel.add(numbers[0]);
 
-        board = new Board();
+        board = new Board(numberText, letterText);
 
         whiteOnBottom = true;
 
@@ -197,7 +211,7 @@ public class Chess {
                 Object[] colorOptions = {};
                 whitesColor = Color.WHITE;
                 blacksColor = Color.BLACK;
-                board = new Board();
+                board = new Board(numberText, letterText);
 
                 int newWindow = JOptionPane.showOptionDialog(frame,
                     "Choose your player:",
@@ -343,7 +357,7 @@ public class Chess {
                             else {
                                 r2 = i;
                                 c2 = j;
-                                System.out.println(makeMove(r1, c1, r2, c2));
+                                System.out.println(makeMove(r1, c1, r2, c2, board.spaceIsEmpty(r2,c2)));
                                 redrawBoard();
                                 pieceSelected = false;
                             }
@@ -373,20 +387,23 @@ public class Chess {
 
         // Attempts to move the piece at (r1, c1) to (r2, c2).
         // Returns true if successful, otherwise returns false.
-        public boolean makeMove(int r1, int c1, int r2, int c2) {
-            // TODO: make sure the piece belongs to the player
+        public boolean makeMove(int r1, int c1, int r2, int c2, boolean isSpaceEmpty) {
             Piece p = board.getSpacePiece(r1, c1);
 			if (p == null) return false;  // if a piece was clicked on
 			//checks whose turn it is
 			if((playerTurn && p.isWhite()) || (!playerTurn && !p.isWhite())){
 				if (p.move(board, r2, c2)) {   // if the move is valid
-					boolean capture = !board.spaceIsEmpty(r2, c2);
+					boolean capture = !isSpaceEmpty;
+					System.out.println(capture);
 					board.removeFromSpace(r2, c2, capture);
 					board.removeFromSpace(r1, c1, false);
 					board.addToSpace(r2, c2, p);
-					addMoveToList(p, c2, r2);
+					addMoveToList(p, c2, r2, capture);
 					playerTurn = !playerTurn;					
 					return true;
+				}
+				else{
+					printInvalidMoveMessage();
 				}
 			}
 			else{
@@ -401,25 +418,82 @@ public class Chess {
             try{
                 Scanner inFile = new Scanner(file);
 
+				String event = inFile.nextLine(); // event name
+				String site = inFile.nextLine(); // site
+				String date = inFile.nextLine(); // date
+				String round = inFile.nextLine(); // round
+				String player1 = inFile.nextLine(); // player 1
+				String player2 = inFile.nextLine(); // player 2
+				String result = inFile.nextLine(); // result
+				
                 //pattern used to find chess piece movements in PGN file
-                String pattern  = "((O-O)|(O-O-O)|[abcdefghNxBQORK]+[12345678])+[\\+]?(\\s)([abcdefghNxBQORK]+[12345678])*(O-O)?(O-O-O)?[\\+]?";
+                String pattern  = "((O-O-O)|(O-O)|[abcdefghNxBQORK]+[12345678])+[\\+]?";
                 Pattern p = Pattern.compile(pattern);
+				ArrayList<String> moves = new ArrayList<String>();
 
                 //Searches the file for pattern
                 while(inFile.hasNext()){
                     String line = inFile.nextLine();
                     Matcher m = p.matcher(line);
                     while(m.find()){
-                        System.out.println("Found value: " + m.group());
+						moves.add(m.group());
                     }
                 }
+				
+				//goes through all moves found and loads the corresponding pieces
+				for(int i = 0; i < moves.size(); i++){
+					if((i%2) == 0){
+						loadsPieces(moves, i, true);
+					}
+					else{
+						loadsPieces(moves, i, false);
+					}
+				}
                 inFile.close();
-
+				redrawBoard();
             }
             catch(FileNotFoundException ex) {
                 System.out.println("Unable to open file");
             }
         }
+		
+		/*
+		* based on the first character of the move determine which piece is to be loaded
+		* 	params:
+		*	ArrayList<String> moves: the list of moves parsed from load file
+		* 	int i: index of which move is being loaded
+		* 	boolean white: which color is being loaded
+		*/
+		public void loadsPieces(ArrayList<String> moves, int i, boolean white){
+			if(moves.get(i).charAt(0) == 'a' || moves.get(i).charAt(0) == 'b' || moves.get(i).charAt(0) == 'c' ||
+				moves.get(i).charAt(0) == 'd' || moves.get(i).charAt(0) == 'e' || moves.get(i).charAt(0) == 'f' ||
+				moves.get(i).charAt(0) == 'g' || moves.get(i).charAt(0) == 'h'){
+				loadPawn(moves.get(i),white);
+			}
+			else if(moves.get(i).charAt(0) == 'N'){
+				loadKnight(moves.get(i), white);
+			}
+			else if(moves.get(i).charAt(0) == 'B'){
+				loadBishop(moves.get(i),white);
+			}
+			else if(moves.get(i).charAt(0) == 'Q'){
+				loadQueen(moves.get(i),white);
+			}
+			else if(moves.get(i).charAt(0) == 'R'){
+				loadRook(moves.get(i),white);
+			}
+			else if(moves.get(i).equals("O-O")){
+				loadKingsideCastling(white);
+			}
+			else if(moves.get(i).equals("O-O-O")){
+				loadQueensideCastling(white);
+			}
+			else if(moves.get(i).charAt(0) == 'K'){
+				loadKing(moves.get(i),white);
+			}
+			playerTurn = !playerTurn;
+		}
+		
         // Writes a PGN file
         public void savePGN(File file){
             try{
@@ -429,12 +503,13 @@ public class Chess {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 Date date = new Date();
                 String d = "[Date \""+dateFormat.format(date)+"\"]";
-                String white = "[" + whitesColorName + " \"Player\"]";
+                String round = "1";
+				String white = "[" + whitesColorName + " \"Player\"]";
                 String black = "[" + blacksColorName + " \"Computer\"]";
 				String result = "[Result]";
 
                 //writes the header of the PGN file
-                writer.println(event+"\n"+site+"\n"+d+"\n"+white+"\n"+black+"\n"+result+"\n\n");
+                writer.println(event+"\n"+site+"\n"+d+"\n"+round+"\n"+white+"\n"+black+"\n"+result+"\n\n");
 				for(int i = 0; i < turnNumber; i++){
 					if(player2Moves[i] != null){
 						writer.print((i+1)+"."+player1Moves[i]+" "+player2Moves[i]+" ");
@@ -460,26 +535,610 @@ public class Chess {
 				alertMessage = "It is " + blacksColorName + "'s turn.";
 			}
 			JOptionPane.showMessageDialog(frame, alertMessage, "Warning", JOptionPane.WARNING_MESSAGE);
-		}		
+		}
+
+		//	prints out message to alert the user of an invalid move.
+		public void printInvalidMoveMessage(){
+			String invalidMoveMessage = "The move you tried to make is not valid.";
+			JOptionPane.showMessageDialog(frame, invalidMoveMessage, "Warning", JOptionPane.WARNING_MESSAGE);
+		}
 		
 		/*takes the piece being moved and the destination of move. Then composes
 		the a string of the move based on PGN notation
 		params:
-			Piece p:	piece being moved
-			int c2:		destination column
-			int r2:		destination row*/
-		public void addMoveToList(Piece p, int c2, int r2){
+			Piece p:			piece being moved
+			int c2:				destination column
+			int r2:				destination row
+			boolean capture: 	if a piece was captured.
+		*/
+		public void addMoveToList(Piece p, int c2, int r2, boolean capture){
 			//Composes move based on PGN notation
 			if(p.getSymbol().equals("Kn")) move = "N";
 			else if(p.getSymbol().equals("P")) move = "";
 			else move = p.getSymbol();
-			move = move + letters[c2].getText() + numbers[r2].getText();
+			//if a piece is captured during move
+			if(capture){
+				move = move + "x" + letters[c2+1].getText().toLowerCase() + numbers[r2].getText();
+			}
+			else{
+				move = move + letters[c2+1].getText().toLowerCase() + numbers[r2].getText();
+			}
+			if(p.isWhite()){
+				//if the opponents king is put into check during move
+				if(board.blackCheck()){
+					move += "+";
+				}
+			}
+			else{
+				//if the opponents king is put into check during move
+				if(board.whiteCheck()){
+					move += "+";
+				}
+			}
 			if(playerTurn){
 				turnNumber++;
 				player1Moves[turnNumber-1] = move;
 			}
 			else{
 				player2Moves[turnNumber-1] = move;
+			}
+		}
+		
+		/*
+		* loads a pawn to the corresponding space in the move. Parses the row and column and loads to space
+		* 	params:
+		*	String move: the move parsed from load file
+		* 	boolean white: which color is being loaded
+		*/
+		public void loadPawn(String move, boolean white){
+			int y = 0;
+			for(int j = 0; j < 9; j++){
+				if(Character.toString(move.charAt(0)).equals(letterText[j]))
+					y = j-1;
+			}
+			if(move.charAt(1) != 'x'){
+				int x = Character.getNumericValue(move.charAt(1));
+				if(white){
+					loadWhitePawn(x,y);
+				}
+				else{
+					loadBlackPawn(x,y);
+				}
+			}
+			else{
+				loadPawnCapture(white,move,y);
+			}
+		}
+		
+		/*
+		* adds the white pawn to the board and then removes the same pawn from its previous location
+		* 	params:
+		*	int x: the parsed row
+		*	int y: the parsed column
+		*/
+		public void loadWhitePawn(int x, int y){
+			board.addToSpace(8-x,y,new Pawn(true,8-x,y));
+			if(board.getSpacePiece(9-x,y) == null){
+				if(board.getSpacePiece(10-x,y) != null && board.getSpacePiece(10-x,y).isWhite()){
+					if(board.getSpacePiece(10-x,y).getSymbol().equals("P"))
+						board.removeFromSpace(10-x,y,false);
+				}
+			}
+			else{
+				if(board.getSpacePiece(9-x,y).isWhite()){
+					if(board.getSpacePiece(9-x,y).getSymbol().equals("P"))
+						board.removeFromSpace(9-x,y,false);
+				}
+			}
+		}
+		
+		/*
+		* adds the black pawn to the board and then removes the same pawn from its previous location
+		* 	params:
+		*	int x: the parsed row
+		*	int y: the parsed column
+		*/
+		public void loadBlackPawn(int x, int y){
+			board.addToSpace(8-x,y,new Pawn(false,8-x,y));
+			if(board.getSpacePiece(7-x,y) == null){
+				if(board.getSpacePiece(6-x,y) != null && !board.getSpacePiece(6-x,y).isWhite()){
+					if(board.getSpacePiece(6-x,y).getSymbol().equals("P"))
+						board.removeFromSpace(6-x,y,false);
+				}
+			}
+			else{
+				if(!board.getSpacePiece(7-x,y).isWhite()){
+					if(board.getSpacePiece(7-x,y).getSymbol().equals("P"))
+						board.removeFromSpace(7-x,y,false);
+				}
+			}
+		}
+		
+		/*
+		* adds the pawn to the board and then removes the same pawn from its previous location. Takes into account the pawn
+		* captures another piece.
+		* 	params:
+		*	int x: the parsed row
+		*	int y: the parsed column
+		*/
+		public void loadPawnCapture(boolean white, String move, int y){
+			int y2 = 0;
+			for(int j = 0; j < 9; j++){
+				if(Character.toString(move.charAt(2)).equals(letterText[j]))
+					y2 = j-1;
+			}
+			int x = Character.getNumericValue(move.charAt(3));
+			board.removeFromSpace(8-x,y2,true);
+			if(white){
+				board.addToSpace(8-x,y2,new Pawn(true,8-x,y2));
+				board.removeFromSpace(9-x,y,false);
+			}					
+			else{
+				board.addToSpace(8-x,y2,new Pawn(false,8-x,y2));
+				board.removeFromSpace(7-x,y,false);
+			}
+		}
+		
+		/*
+		* loads knight by parsing the row and column of new location. adding knight to new location
+		* and removing the knight from the previous location.
+		* 	params:
+		*	String move: the move parsed from file
+		*	boolean white: which color the piece is
+		*/
+		public void loadKnight(String move, boolean white){
+			if(move.length() == 3 || (move.length() == 4 && move.charAt(3) == '+')){
+				int y = 0;
+				for(int j = 0; j < 9; j++){
+					if(Character.toString(move.charAt(1)).equals(letterText[j]))
+						y = j-1;
+				}
+				
+				int x = Character.getNumericValue(move.charAt(2));
+				findAndRemoveKnight(white, x, y);
+				board.addToSpace(8-x,y,new Knight(white,8-x,y));
+			}
+			else{
+				int y = 0;
+				for(int j = 0; j < 9; j++){
+					if(Character.toString(move.charAt(2)).equals(letterText[j]))
+						y = j-1;
+				}
+				
+				int x = Character.getNumericValue(move.charAt(3));
+				findAndRemoveKnight(white, x, y);
+				board.addToSpace(8-x,y,new Knight(white,8-x,y));
+			}
+		}
+		
+		/*
+		* Searches all possible locations of the previous knight and removes it from the board
+		* 	params:
+		*	boolean white: which color the piece is
+		*	int x: the row of the knight
+		*	int y: the column of the knight
+		*/
+		public void findAndRemoveKnight(boolean white, int x, int y){
+			if(board.getSpacePiece((8-x)+1,y-2) != null){
+				if(board.getSpacePiece((8-x)+1,y-2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+1,y-2).isWhite() == white)
+						board.removeFromSpace((8-x)+1,y-2,false);
+			}
+			if(board.getSpacePiece((8-x)-1,y-2) != null){
+				if(board.getSpacePiece((8-x)-1,y-2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-1,y-2).isWhite() == white)
+					board.removeFromSpace((8-x)-1,y-2,false);
+			}
+			if(board.getSpacePiece((8-x)-1,y+2) != null){
+				if(board.getSpacePiece((8-x)-1,y+2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-1,y+2).isWhite() == white)
+					board.removeFromSpace((8-x)-1,y+2,false);
+			}
+			if(board.getSpacePiece((8-x)+1,y+2) != null){
+				if(board.getSpacePiece((8-x)+1,y+2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+1,y+2).isWhite() == white)
+					board.removeFromSpace((8-x)+1,y+2,false);
+			}
+			if(board.getSpacePiece((8-x)+2,y+1) != null){
+				if(board.getSpacePiece((8-x)+2,y+1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+2,y+1).isWhite() == white)
+					board.removeFromSpace((8-x)+2,y+1,false);
+			}
+			if(board.getSpacePiece((8-x)+2,y-1) != null){
+				if(board.getSpacePiece((8-x)+2,y-1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+2,y-1).isWhite() == white)
+					board.removeFromSpace((8-x)+2,y-1,false);
+			}
+			if(board.getSpacePiece((8-x)-2,y+1) != null){
+				if(board.getSpacePiece((8-x)-2,y+1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-2,y+1).isWhite() == white)
+					board.removeFromSpace((8-x)-2,y+1,false);
+			}
+			if(board.getSpacePiece((8-x)-2,y-1) != null){
+				if(board.getSpacePiece((8-x)-2,y-1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-2,y-1).isWhite() == white)
+					board.removeFromSpace((8-x)-2,y-1,false);
+			}
+		}
+		
+		/*
+		* loads bishop by parsing the row and column of new location. adding bishop to new location
+		* and removing the bishop from the previous location.
+		* 	params:
+		*	String move: the move parsed from file
+		*	boolean white: which color the piece is
+		*/
+		public void loadBishop(String move, boolean white){
+			if(move.length() == 3 || (move.length() == 4 && move.charAt(3) == '+')){
+				int y = 0;
+				for(int j = 0; j < 9; j++){
+					if(Character.toString(move.charAt(1)).equals(letterText[j]))
+						y = j-1;
+				}
+				int x = Character.getNumericValue(move.charAt(2));
+				findAndRemoveBishop(white,x,y);
+				board.addToSpace(8-x,y,new Bishop(white,8-x,y));				
+			}
+			else{
+				int y = 0;
+				for(int j = 0; j < 9; j++){
+					if(Character.toString(move.charAt(2)).equals(letterText[j]))
+						y = j-1;
+				}
+				int x = Character.getNumericValue(move.charAt(3));
+				findAndRemoveBishop(white, x, y);
+				board.addToSpace(8-x,y,new Bishop(white,8-x,y));
+			}
+		}
+		
+		/*
+		* Searches all possible locations of the previous bishop and removes it from the board
+		* 	params:
+		*	boolean white: which color the piece is
+		*	int x: the row of the bishop
+		*	int y: the column of the bishop
+		*/
+		public void findAndRemoveBishop(boolean white, int x, int y){
+			for(int i = 1; i < 8; i++){
+				if(board.getSpacePiece((8-x)+i,y+i) != null){
+					if(board.getSpacePiece((8-x)+i,y+i).getSymbol().equals("B") && board.getSpacePiece((8-x)+i,y+i).isWhite() == white){
+						board.removeFromSpace((8-x)+i,y+i,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x)-i,y+i) != null){
+					if(board.getSpacePiece((8-x)-i,y+i).getSymbol().equals("B") && board.getSpacePiece((8-x)-i,y+i).isWhite() == white){
+						board.removeFromSpace((8-x)-i,y+i,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x)+i,y-i) != null){
+					if(board.getSpacePiece((8-x)+i,y-i).getSymbol().equals("B") && board.getSpacePiece((8-x)+i,y-i).isWhite() == white){
+						board.removeFromSpace((8-x)+i,y-i,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x)-i,y-i) != null){
+					if(board.getSpacePiece((8-x)-i,y-i).getSymbol().equals("B") && board.getSpacePiece((8-x)-i,y-i).isWhite() == white){
+						board.removeFromSpace((8-x)-i,y-i,false);
+						break;
+					}
+				}
+			}
+		}
+		
+		/*
+		* loads queen by parsing the row and column of new location. adding queen to new location
+		* and removing the queen from the previous location.
+		* 	params:
+		*	String move: the move parsed from file
+		*	boolean white: which color the piece is
+		*/
+		public void loadQueen(String move, boolean white){
+			if(move.length() == 3 || (move.length() == 4 && move.charAt(3) == '+')){
+				int y = 0;
+				for(int j = 0; j < 9; j++){
+					if(Character.toString(move.charAt(1)).equals(letterText[j]))
+						y = j-1;
+				}
+				int x = Character.getNumericValue(move.charAt(2));
+				findAndRemoveQueen(white, x, y);
+				board.addToSpace(8-x,y,new Queen(white, 8-x,y));
+			}
+			else{
+				int y = 0;
+				for(int j = 0; j < 9; j++){
+					if(Character.toString(move.charAt(2)).equals(letterText[j]))
+						y = j-1;
+				}
+				int x = Character.getNumericValue(move.charAt(3));
+				findAndRemoveQueen(white, x, y);
+				board.addToSpace(8-x,y,new Queen(white, 8-x,y));
+			}
+		}
+		
+		/*
+		* Searches all possible locations of the previous queen and removes it from the board
+		* 	params:
+		*	boolean white: which color the piece is
+		*	int x: the row of the queen
+		*	int y: the column of the queen
+		*/
+		public void findAndRemoveQueen(boolean white, int x, int y){
+			for(int i = 1; i < 8; i++){
+				if(board.getSpacePiece((8-x)+i,y+i) != null){
+					if(board.getSpacePiece((8-x)+i,y+i).getSymbol().equals("Q") && board.getSpacePiece((8-x)+i,y+i).isWhite() == white){
+						board.removeFromSpace((8-x)+i,y+i,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x)-i,y+i) != null){
+					if(board.getSpacePiece((8-x)-i,y+i).getSymbol().equals("Q") && board.getSpacePiece((8-x)-i,y+i).isWhite() == white){
+						board.removeFromSpace((8-x)-i,y+i,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x)+i,y-i) != null){
+					if(board.getSpacePiece((8-x)+i,y-i).getSymbol().equals("Q") && board.getSpacePiece((8-x)+i,y-i).isWhite() == white){
+						board.removeFromSpace((8-x)+i,y-i,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x)-i,y-i) != null){
+					if(board.getSpacePiece((8-x)-i,y-i).getSymbol().equals("Q") && board.getSpacePiece((8-x)-i,y-i).isWhite() == white){
+						board.removeFromSpace((8-x)-i,y-i,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x)-i,y) != null){
+					if(board.getSpacePiece((8-x)-i,y).getSymbol().equals("Q") && board.getSpacePiece((8-x)-i,y).isWhite() == white){
+						board.removeFromSpace((8-x)-i,y,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x)+i,y) != null){
+					if(board.getSpacePiece((8-x)+i,y).getSymbol().equals("Q") && board.getSpacePiece((8-x)+i,y).isWhite() == white){
+						board.removeFromSpace((8-x)+i,y,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x),y+i) != null){
+					if(board.getSpacePiece((8-x),y+i).getSymbol().equals("Q") && board.getSpacePiece((8-x),y+i).isWhite() == white){
+						board.removeFromSpace((8-x),y+i,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x),y-i) != null){
+					if(board.getSpacePiece((8-x),y-i).getSymbol().equals("Q") && board.getSpacePiece((8-x),y-i).isWhite() == white){
+						board.removeFromSpace((8-x),y-i,false);
+						break;
+					}
+				}
+			}
+		}
+		
+		/*
+		* loads rook by parsing the row, column of new location and either the row or column of the previous location. 
+		* adding rook to new location and removing the rook from the previous location.
+		* 	params:
+		*	String move: the move parsed from file
+		*	boolean white: which color the piece is
+		*/
+		public void loadRook(String move, boolean white){
+			if(move.length() == 3 || (move.length() == 4 && move.charAt(3) == '+')){
+				int y = 0;
+				for(int j = 0; j < 9; j++){
+					if(Character.toString(move.charAt(1)).equals(letterText[j]))
+						y = j-1; //new column
+				}
+				int x = Character.getNumericValue(move.charAt(2)); //new row
+				findAndRemoveRook(white, x, y);
+				board.addToSpace(8-x,y,new Rook(white,8-x,y));
+			}
+			else{
+				//if previous row is also given
+				if(move.charAt(1) == '1' || move.charAt(1) == '2' || move.charAt(1) == '3' || move.charAt(1) == '4' || move.charAt(1) == '5' ||
+						move.charAt(1) == '6' || move.charAt(1) == '7' || move.charAt(1) == '8'){
+					removeAndLoadRookIfGivenRow(move, white);
+				}
+				//if previous column is also given
+				else if(move.charAt(1) == 'a' || move.charAt(1) == 'b' || move.charAt(1) == 'c' || move.charAt(1) == 'd' || move.charAt(1) == 'e' ||
+							move.charAt(1) == 'f' || move.charAt(1) == 'g' || move.charAt(1) == 'h'){
+					removeAndLoadRookIfGivenCol(move, white);
+				}
+				else if(move.charAt(1) == 'x'){
+					int y = 0;
+					for(int j = 0; j < 9; j++){
+						if(Character.toString(move.charAt(2)).equals(letterText[j]))
+							y = j-1;
+					}
+					int x = Character.getNumericValue(move.charAt(3));
+					findAndRemoveRook(white, x, y);
+					board.addToSpace(8-x,y,new Rook(white,8-x,y));
+				}
+			}
+		}
+		
+		//searches the pevious column for the rook and removes it from the board
+		// params
+		// String move: the move parsed from load file
+		// boolean white: which color the piece is
+		public void removeAndLoadRookIfGivenCol(String move, boolean white){
+			int y1 = 0;
+			int y2 = 0;
+			for(int j = 0; j < 9; j++){
+				if(Character.toString(move.charAt(1)).equals(letterText[j]))
+					y1 = j-1; //old column
+				else if(Character.toString(move.charAt(2)).equals(letterText[j]))
+					y2 = j-1; //new column
+			}
+			int x = Character.getNumericValue(move.charAt(3)); //new row
+			if(board.getSpacePiece(8-x,y1).getSymbol().equals("R")){
+				board.removeFromSpace(8-x,y1,false);
+			}
+			board.addToSpace(8-x,y2,new Rook(white,8-x,y2));
+		}
+		
+		//searches the previous ow for the rook and removes it from the board
+		// params
+		// String move: the move parsed from load file
+		// boolean white: which color the piece is
+		public void removeAndLoadRookIfGivenRow(String move, boolean white){
+			int y = 0;
+			for(int j = 0; j < 9; j++){
+				if(Character.toString(move.charAt(2)).equals(letterText[j]))
+					y = j-1;
+			}
+			int x1 = Character.getNumericValue(move.charAt(1));
+			int x2 = Character.getNumericValue(move.charAt(3));
+			if(white){
+				//System.out.println("white");
+				board.addToSpace(8-x2,y,new Rook(true,8-x2,y));
+			}
+			else{
+				//System.out.println("black");
+				board.addToSpace(8-x2,y,new Rook(false,8-x2,y));
+			}
+			if(board.getSpacePiece(8-x1,y).getSymbol().equals("R")){
+				board.removeFromSpace(8-x1,y,false);
+			}
+		}
+		
+		/*
+		* Searches all possible locations of the previous rook and removes it from the board
+		* 	params:
+		*	boolean white: which color the piece is
+		*	int x: the row of the rook
+		*	int y: the column of the rook
+		*/
+		public void findAndRemoveRook(boolean white, int x, int y){
+			for(int i = 1; i < 8; i++){
+				if(board.getSpacePiece((8-x)-i,y) != null){
+					if(board.getSpacePiece((8-x)-i,y).getSymbol().equals("R") && board.getSpacePiece((8-x)-i,y).isWhite() == white){
+						board.removeFromSpace((8-x)-i,y,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x)+i,y) != null){
+					if(board.getSpacePiece((8-x)+i,y).getSymbol().equals("R") && board.getSpacePiece((8-x)+i,y).isWhite() == white){
+						board.removeFromSpace((8-x)+i,y,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x),y+i) != null){
+					if(board.getSpacePiece((8-x),y+i).getSymbol().equals("R") && board.getSpacePiece((8-x),y+i).isWhite() == white){
+						board.removeFromSpace((8-x),y+i,false);
+						break;
+					}
+				}
+				if(board.getSpacePiece((8-x),y-i) != null){
+					if(board.getSpacePiece((8-x),y-i).getSymbol().equals("R") && board.getSpacePiece((8-x),y-i).isWhite() == white){
+						board.removeFromSpace((8-x),y-i,false);
+						break;
+					}
+				}
+			}
+		}
+		
+		//loads a kingside castling move based on which color the king is.
+		// params:
+		// boolean white: which color the king is
+		public void loadKingsideCastling(boolean white){
+			if(white){
+				King k = board.getWhiteKing();
+				int row = k.getRow();
+				int col = k.getCol();
+				board.removeFromSpace(7,7,false); //removes the rook
+				board.removeFromSpace(row,col,false); //removes the king
+				board.addToSpace(row,col+2,k); //adds king
+				board.addToSpace(row,col+1,new Rook(true,row,col+1)); //add rook
+				k.setRow(row);
+				k.setCol(col+2);
+			}
+			else{
+				King k = board.getBlackKing();
+				int row = k.getRow();
+				int col = k.getCol();
+				board.removeFromSpace(0,7,false); //removes rook
+				board.removeFromSpace(row,col,false); //removes king
+				board.addToSpace(row,col+2,k); //adds king
+				board.addToSpace(row,col+1,new Rook(false,row,col+1)); //adds rook
+				k.setRow(row);
+				k.setCol(col+2);
+			}
+		}
+		
+		//loads a queenside castling move based on which color the king is.
+		// params:
+		// boolean white: which color the king is
+		public void loadQueensideCastling(boolean white){
+			if(white){
+				King k = board.getWhiteKing();
+				int row = k.getRow();
+				int col = k.getCol();
+				board.removeFromSpace(7,0,false); //removes the queenside rook
+				board.removeFromSpace(row,col,false); //removes the king
+				board.addToSpace(row,col-2,k); //adds the king to new location
+				board.addToSpace(row,col-1,new Rook(true,row,col-1)); //adds the rook to new location
+				k.setRow(row);
+				k.setCol(col-2);
+			}
+			else{
+				King k = board.getWhiteKing();
+				int row = k.getRow();
+				int col = k.getCol();
+				board.removeFromSpace(0,0,false); //removes queenside rook
+				board.removeFromSpace(row,col,false); //removes king
+				board.addToSpace(row,col-2,k); //adds king
+				board.addToSpace(row,col-1,new Rook(false,row,col-1)); //adds rook
+				k.setRow(row);
+				k.setCol(col-2);
+			}
+		}
+		
+		/*
+		* loads king by parsing the row, and column of new location 
+		* adding king to new location and removing the king from the previous location.
+		* 	params:
+		*	String move: the move parsed from file
+		*	boolean white: which color the piece is
+		*/
+		public void loadKing(String move, boolean white){
+			if(white){
+				King k = board.getWhiteKing();
+				int row = k.getRow();
+				int col = k.getCol();
+				board.removeFromSpace(row,col,false);
+				addKing(move, white, k);
+			}
+			else{
+				King k = board.getBlackKing();
+				int row = k.getRow();
+				int col = k.getCol();
+				board.removeFromSpace(row,col,false);
+				addKing(move, white, k);
+			}
+		}
+		
+		//parses the move and adds king to the new location
+		//params:
+		//String move: the move parsed from the load file
+		//boolean white: what color the king is
+		//King k: the king piece
+		public void addKing(String move, boolean white, King k){
+			if(move.length() == 3 || (move.length() == 4 && move.charAt(3) == '+')){
+				int y = 0;
+				for(int j = 0; j < 9; j++){
+					if(Character.toString(move.charAt(1)).equals(letterText[j]))
+						y = j-1; //new column
+				}
+				int x = Character.getNumericValue(move.charAt(2)); //new row
+				board.addToSpace(8-x,y,k);
+				k.setRow(8-x);
+				k.setCol(y);
+			}
+			else{
+				int y = 0;
+				for(int j = 0; j < 9; j++){
+					if(Character.toString(move.charAt(2)).equals(letterText[j]))
+						y = j-1; //new column
+				}
+				int x = Character.getNumericValue(move.charAt(3)); // new row
+				board.addToSpace(8-x,y,k);
+				k.setRow(8-x);
+				k.setCol(y);					
 			}
 		}
     }

@@ -2,19 +2,22 @@ package laboon;
 public class Space {
 	private int x;
 	private int y;
+	private String tag;
 	private Piece piece;
 
 	//Blank space
-	public Space(int h, int v) {
+	public Space(int h, int v, String[] numberText, String[] letterText) {
 		x = h;
 		y = v;
+		tag = letterText[y] + numberText[x];
 		piece = null;
 	}
 
 	//Create space with piece on it
-	public Space (int h, int v, Piece token) {
+	public Space (int h, int v, Piece token, String[] numberText, String[] letterText) {
 		x = h;
 		y = h;
+		tag = letterText[y] + numberText[x];
 		piece = token;
 	}
 
@@ -43,5 +46,9 @@ public class Space {
 	// Returns the piece on the space
 	public Piece getPiece() {
 		return piece;
+	}
+	
+	public String getTag(){
+		return tag;
 	}
 }
