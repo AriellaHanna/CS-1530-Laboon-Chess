@@ -38,8 +38,8 @@ public class Chess {
 	private boolean playerTurn = true;
 	private int turnNumber = 0;
 	private String move;
-	private String[] player1Moves = new String[20];
-	private String[] player2Moves = new String[20];
+	private String[] player1Moves = new String[30];
+	private String[] player2Moves = new String[30];
 	private String[] numberText = new String[8];
 	private String[] letterText = new String[9];
 
@@ -416,14 +416,20 @@ public class Chess {
         // loads and parses the PGN file
         public void loadPGN(File file){
             try{
+				board = new Board(numberText, letterText);
+				turnNumber = 1;
+				player1Moves = new String[30];
+				player2Moves = new String[30];
+				
                 Scanner inFile = new Scanner(file);
 
 				String event = inFile.nextLine(); // event name
 				String site = inFile.nextLine(); // site
 				String date = inFile.nextLine(); // date
 				String round = inFile.nextLine(); // round
-				String player1 = inFile.nextLine(); // player 1
+				String player1 = inFile.nextLine();	// player 1
 				String player2 = inFile.nextLine(); // player 2
+				loadPlayerColors(player1, player2);					
 				String result = inFile.nextLine(); // result
 				
                 //pattern used to find chess piece movements in PGN file
@@ -437,6 +443,7 @@ public class Chess {
                     Matcher m = p.matcher(line);
                     while(m.find()){
 						moves.add(m.group());
+						System.out.println(m.group());
                     }
                 }
 				
@@ -456,6 +463,56 @@ public class Chess {
                 System.out.println("Unable to open file");
             }
         }
+		
+		// loads the piece colors which were in the saved pgn file
+		// param:
+		// String player1 : a string containing the player 1's color
+		// String player 2 : a string containing the player 2's color
+		public void loadPlayerColors(String player1, String player2){
+			String colorPattern = "((White)|(Blue)|(Red)|(Green))"; // regex for parsing the color
+			Pattern pc = Pattern.compile(colorPattern);
+			Matcher mc = pc.matcher(player1);
+			//sets the color
+			if(mc.find()){
+				if(mc.group().equals("White")){
+					whitesColor = Color.WHITE;
+					whitesColorName = "White";
+				}
+				else if(mc.group().equals("Blue")){
+					whitesColor = Color.BLUE;
+					whitesColorName = "Blue";
+				}
+				else if(mc.group().equals("Red")){
+					whitesColor = Color.RED;
+					whitesColorName = "Red";
+				}
+				else if(mc.group().equals("Green")){
+					whitesColor = Color.GREEN;
+					whitesColorName = "Green";
+				}
+			}
+			
+			mc = pc.matcher(player2);
+			//sets the color
+			if(mc.find()){
+				if(mc.group().equals("Black")){
+					blacksColor = Color.BLACK;
+					blacksColorName = "Black";
+				}
+				else if(mc.group().equals("Blue")){
+					blacksColor = Color.BLUE;
+					blacksColorName = "Blue";
+				}
+				else if(mc.group().equals("Red")){
+					blacksColor = Color.RED;
+					blacksColorName = "Red";
+				}
+				else if(mc.group().equals("Green")){
+					blacksColor = Color.GREEN;
+					blacksColorName = "Green";
+				}
+			}
+		}
 		
 		/*
 		* based on the first character of the move determine which piece is to be loaded
@@ -491,7 +548,17 @@ public class Chess {
 			else if(moves.get(i).charAt(0) == 'K'){
 				loadKing(moves.get(i),white);
 			}
+			
+			if(playerTurn){
+				player1Moves[turnNumber-1] = moves.get(i);
+			}
+			else{
+				player2Moves[turnNumber-1] = moves.get(i);
+				turnNumber++;
+			}
+			
 			playerTurn = !playerTurn;
+			
 		}
 		
         // Writes a PGN file
