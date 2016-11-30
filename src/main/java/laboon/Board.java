@@ -13,12 +13,12 @@ public class Board {
     private King whiteKing;
 
     //Creates the board at the start of the game
-    public Board() {
+    public Board(String[] numberText, String[] letterText) {
         // initialize spaces on board
         for (int i = 0; i < 8; i++)
         {
             for (int j = 0; j < 8; j ++){
-                spaces[i][j] = new Space(i, j);
+                spaces[i][j] = new Space(i, j, numberText, letterText);
             }
         }
         //initialize capture pieces as empty
