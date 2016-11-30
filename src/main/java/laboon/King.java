@@ -32,8 +32,10 @@ public class King extends Piece {
 				undo(board, oldRow,oldCol,savedPiece);
 				return false;
 			}
-			else
+			else{
+				hasMoved();
 				return true;
+			}
 		}
 		else
 			return false;
