@@ -30,6 +30,7 @@ public class Chess {
     private boolean win = false;
     private boolean test;
     private Board board;
+    private boolean aiEnabled = true;
     private boolean whiteOnBottom;
     private Color blacksColor = Color.BLACK;
 	private String blacksColorName = "Black";
@@ -42,8 +43,9 @@ public class Chess {
 	private String[] player2Moves = new String[30];
 	private String[] numberText = new String[8];
 	private String[] letterText = new String[9];
+    private String moves = "";
+    private Stockfish stockfish;
 
-    
 
     public static void main(String[] args) {
         new Chess(8);
@@ -51,6 +53,14 @@ public class Chess {
 
     public Chess(int size)
     {
+        try {
+            stockfish = new Stockfish();
+        } catch (IOException ioe) {
+            System.err.println("Failed to start Stockfish!");
+            aiEnabled = false;
+            ioe.printStackTrace();
+        }
+
         game = size;
         frame = new JFrame("Laboon Chess"); //creates the JFrame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -239,7 +249,7 @@ public class Chess {
 
                 if (newWindow == 0) {  // player 1 is on the bottom
                     whitesColor = playerOneColors[chooseColorWindow];
-					
+
 					//sets the whitesColorName and blacksColorName String for displaying whose turn and alert
 					if(whitesColor == Color.WHITE) whitesColorName = "White";
 					else if(whitesColor == Color.BLUE) whitesColorName = "Blue";
@@ -248,7 +258,7 @@ public class Chess {
 					blacksColorName = "Black";
                 } else if (newWindow == 1) {  // player 2 is on the top
                     blacksColor = playerTwoColors[chooseColorWindow];
-					
+
 					//sets the whitesColorName and blacksColorName String for displaying whose turn and alert
 					if(blacksColor == Color.WHITE) blacksColorName = "Black";
 					else if(blacksColor == Color.BLUE) blacksColorName = "Blue";
@@ -357,7 +367,21 @@ public class Chess {
                             else {
                                 r2 = i;
                                 c2 = j;
-                                System.out.println(makeMove(r1, c1, r2, c2, board.spaceIsEmpty(r2,c2)));
+                                boolean validMove = makeMove(r1, c1, r2, c2);
+
+                                if (validMove) {
+                                    String algMove = toAlgebraicNotation(r1, c1, r2, c2);
+                                    System.out.println(algMove);
+                                    moves += " " + algMove;
+
+                                    if (aiEnabled) {
+                                        algMove = aiMove(stockfish, moves);
+                                        moves += " " + algMove;
+                                        int[] rcMove = toRowColNotation(algMove);
+                                        makeMove(rcMove[0], rcMove[1], rcMove[2], rcMove[3]);
+                                    }
+                                }
+
                                 redrawBoard();
                                 pieceSelected = false;
                             }
@@ -380,14 +404,15 @@ public class Chess {
                 }
             }
 			//displays whose turn it is
-			if(playerTurn) display.setText("It is " + whitesColorName + "'s Turn"); 
+			if(playerTurn) display.setText("It is " + whitesColorName + "'s Turn");
 			else display.setText("It is " + blacksColorName + "'s Turn");
         }
 
 
         // Attempts to move the piece at (r1, c1) to (r2, c2).
         // Returns true if successful, otherwise returns false.
-        public boolean makeMove(int r1, int c1, int r2, int c2, boolean isSpaceEmpty) {
+        public boolean makeMove(int r1, int c1, int r2, int c2) {
+            boolean isSpaceEmpty = board.spaceIsEmpty(r2,c2);
             Piece p = board.getSpacePiece(r1, c1);
 			if (p == null) return false;  // if a piece was clicked on
 			//checks whose turn it is
@@ -399,7 +424,7 @@ public class Chess {
 					board.removeFromSpace(r1, c1, false);
 					board.addToSpace(r2, c2, p);
 					addMoveToList(p, c2, r2, capture);
-					playerTurn = !playerTurn;					
+					playerTurn = !playerTurn;
 					return true;
 				}
 				else{
@@ -420,7 +445,7 @@ public class Chess {
 				turnNumber = 1;
 				player1Moves = new String[30];
 				player2Moves = new String[30];
-				
+
                 Scanner inFile = new Scanner(file);
 
 				String event = inFile.nextLine(); // event name
@@ -429,9 +454,9 @@ public class Chess {
 				String round = inFile.nextLine(); // round
 				String player1 = inFile.nextLine();	// player 1
 				String player2 = inFile.nextLine(); // player 2
-				loadPlayerColors(player1, player2);					
+				loadPlayerColors(player1, player2);
 				String result = inFile.nextLine(); // result
-				
+
                 //pattern used to find chess piece movements in PGN file
                 String pattern  = "((O-O-O)|(O-O)|[abcdefghNxBQORK]+[12345678])+[\\+]?";
                 Pattern p = Pattern.compile(pattern);
@@ -446,7 +471,7 @@ public class Chess {
 						System.out.println(m.group());
                     }
                 }
-				
+
 				//goes through all moves found and loads the corresponding pieces
 				for(int i = 0; i < moves.size(); i++){
 					if((i%2) == 0){
@@ -463,7 +488,7 @@ public class Chess {
                 System.out.println("Unable to open file");
             }
         }
-		
+
 		// loads the piece colors which were in the saved pgn file
 		// param:
 		// String player1 : a string containing the player 1's color
@@ -491,7 +516,7 @@ public class Chess {
 					whitesColorName = "Green";
 				}
 			}
-			
+
 			mc = pc.matcher(player2);
 			//sets the color
 			if(mc.find()){
@@ -513,7 +538,7 @@ public class Chess {
 				}
 			}
 		}
-		
+
 		/*
 		* based on the first character of the move determine which piece is to be loaded
 		* 	params:
@@ -548,7 +573,7 @@ public class Chess {
 			else if(moves.get(i).charAt(0) == 'K'){
 				loadKing(moves.get(i),white);
 			}
-			
+
 			if(playerTurn){
 				player1Moves[turnNumber-1] = moves.get(i);
 			}
@@ -556,11 +581,11 @@ public class Chess {
 				player2Moves[turnNumber-1] = moves.get(i);
 				turnNumber++;
 			}
-			
+
 			playerTurn = !playerTurn;
-			
+
 		}
-		
+
         // Writes a PGN file
         public void savePGN(File file){
             try{
@@ -582,7 +607,7 @@ public class Chess {
 						writer.print((i+1)+"."+player1Moves[i]+" "+player2Moves[i]+" ");
 					}
 					else{
-						writer.print((i+1)+"."+player1Moves[i]+" ");						
+						writer.print((i+1)+"."+player1Moves[i]+" ");
 					}
 				}
                 writer.close();
@@ -591,8 +616,8 @@ public class Chess {
                 System.out.println("Unable to open file");
             }
 
-        }		
-		// prints out alert message if it is not the player's turn	
+        }
+		// prints out alert message if it is not the player's turn
 		public void printTurnAlert(){
 			String alertMessage;
 			if(playerTurn){
@@ -609,7 +634,7 @@ public class Chess {
 			String invalidMoveMessage = "The move you tried to make is not valid.";
 			JOptionPane.showMessageDialog(frame, invalidMoveMessage, "Warning", JOptionPane.WARNING_MESSAGE);
 		}
-		
+
 		/*takes the piece being moved and the destination of move. Then composes
 		the a string of the move based on PGN notation
 		params:
@@ -650,7 +675,7 @@ public class Chess {
 				player2Moves[turnNumber-1] = move;
 			}
 		}
-		
+
 		/*
 		* loads a pawn to the corresponding space in the move. Parses the row and column and loads to space
 		* 	params:
@@ -676,7 +701,7 @@ public class Chess {
 				loadPawnCapture(white,move,y);
 			}
 		}
-		
+
 		/*
 		* adds the white pawn to the board and then removes the same pawn from its previous location
 		* 	params:
@@ -698,7 +723,7 @@ public class Chess {
 				}
 			}
 		}
-		
+
 		/*
 		* adds the black pawn to the board and then removes the same pawn from its previous location
 		* 	params:
@@ -720,7 +745,7 @@ public class Chess {
 				}
 			}
 		}
-		
+
 		/*
 		* adds the pawn to the board and then removes the same pawn from its previous location. Takes into account the pawn
 		* captures another piece.
@@ -739,13 +764,13 @@ public class Chess {
 			if(white){
 				board.addToSpace(8-x,y2,new Pawn(true,8-x,y2));
 				board.removeFromSpace(9-x,y,false);
-			}					
+			}
 			else{
 				board.addToSpace(8-x,y2,new Pawn(false,8-x,y2));
 				board.removeFromSpace(7-x,y,false);
 			}
 		}
-		
+
 		/*
 		* loads knight by parsing the row and column of new location. adding knight to new location
 		* and removing the knight from the previous location.
@@ -760,7 +785,7 @@ public class Chess {
 					if(Character.toString(move.charAt(1)).equals(letterText[j]))
 						y = j-1;
 				}
-				
+
 				int x = Character.getNumericValue(move.charAt(2));
 				findAndRemoveKnight(white, x, y);
 				board.addToSpace(8-x,y,new Knight(white,8-x,y));
@@ -771,13 +796,13 @@ public class Chess {
 					if(Character.toString(move.charAt(2)).equals(letterText[j]))
 						y = j-1;
 				}
-				
+
 				int x = Character.getNumericValue(move.charAt(3));
 				findAndRemoveKnight(white, x, y);
 				board.addToSpace(8-x,y,new Knight(white,8-x,y));
 			}
 		}
-		
+
 		/*
 		* Searches all possible locations of the previous knight and removes it from the board
 		* 	params:
@@ -819,7 +844,7 @@ public class Chess {
 					board.removeFromSpace((8-x)-2,y-1,false);
 			}
 		}
-		
+
 		/*
 		* loads bishop by parsing the row and column of new location. adding bishop to new location
 		* and removing the bishop from the previous location.
@@ -836,7 +861,7 @@ public class Chess {
 				}
 				int x = Character.getNumericValue(move.charAt(2));
 				findAndRemoveBishop(white,x,y);
-				board.addToSpace(8-x,y,new Bishop(white,8-x,y));				
+				board.addToSpace(8-x,y,new Bishop(white,8-x,y));
 			}
 			else{
 				int y = 0;
@@ -849,7 +874,7 @@ public class Chess {
 				board.addToSpace(8-x,y,new Bishop(white,8-x,y));
 			}
 		}
-		
+
 		/*
 		* Searches all possible locations of the previous bishop and removes it from the board
 		* 	params:
@@ -885,7 +910,7 @@ public class Chess {
 				}
 			}
 		}
-		
+
 		/*
 		* loads queen by parsing the row and column of new location. adding queen to new location
 		* and removing the queen from the previous location.
@@ -915,7 +940,7 @@ public class Chess {
 				board.addToSpace(8-x,y,new Queen(white, 8-x,y));
 			}
 		}
-		
+
 		/*
 		* Searches all possible locations of the previous queen and removes it from the board
 		* 	params:
@@ -975,9 +1000,9 @@ public class Chess {
 				}
 			}
 		}
-		
+
 		/*
-		* loads rook by parsing the row, column of new location and either the row or column of the previous location. 
+		* loads rook by parsing the row, column of new location and either the row or column of the previous location.
 		* adding rook to new location and removing the rook from the previous location.
 		* 	params:
 		*	String move: the move parsed from file
@@ -1017,7 +1042,7 @@ public class Chess {
 				}
 			}
 		}
-		
+
 		//searches the pevious column for the rook and removes it from the board
 		// params
 		// String move: the move parsed from load file
@@ -1037,7 +1062,7 @@ public class Chess {
 			}
 			board.addToSpace(8-x,y2,new Rook(white,8-x,y2));
 		}
-		
+
 		//searches the previous ow for the rook and removes it from the board
 		// params
 		// String move: the move parsed from load file
@@ -1062,7 +1087,7 @@ public class Chess {
 				board.removeFromSpace(8-x1,y,false);
 			}
 		}
-		
+
 		/*
 		* Searches all possible locations of the previous rook and removes it from the board
 		* 	params:
@@ -1098,7 +1123,7 @@ public class Chess {
 				}
 			}
 		}
-		
+
 		//loads a kingside castling move based on which color the king is.
 		// params:
 		// boolean white: which color the king is
@@ -1126,7 +1151,7 @@ public class Chess {
 				k.setCol(col+2);
 			}
 		}
-		
+
 		//loads a queenside castling move based on which color the king is.
 		// params:
 		// boolean white: which color the king is
@@ -1154,9 +1179,9 @@ public class Chess {
 				k.setCol(col-2);
 			}
 		}
-		
+
 		/*
-		* loads king by parsing the row, and column of new location 
+		* loads king by parsing the row, and column of new location
 		* adding king to new location and removing the king from the previous location.
 		* 	params:
 		*	String move: the move parsed from file
@@ -1178,7 +1203,7 @@ public class Chess {
 				addKing(move, white, k);
 			}
 		}
-		
+
 		//parses the move and adds king to the new location
 		//params:
 		//String move: the move parsed from the load file
@@ -1205,8 +1230,50 @@ public class Chess {
 				int x = Character.getNumericValue(move.charAt(3)); // new row
 				board.addToSpace(8-x,y,k);
 				k.setRow(8-x);
-				k.setCol(y);					
+				k.setCol(y);
 			}
 		}
+
+
+        // Converts move from (row, col) notation to algebraic notation.
+        public String toAlgebraicNotation(int r1, int c1, int r2, int c2) {
+            return letterText[c1+1] + numberText[r1] + letterText[c2+1] + numberText[r2];
+        }
+
+        // Converts move from algebraic notation to (row, col) notation.
+        // Inverse of toAlgebraicNotation.
+        // Example: e2e4 -> ((6, 4), (4, 4))
+        public int[] toRowColNotation(String alg) {
+            int r1, c1, r2, c2;
+            String a = "" + alg.charAt(0);
+            String b = "" + alg.charAt(1);
+            String c = "" + alg.charAt(2);
+            String d = "" + alg.charAt(3);
+            r1 = Arrays.asList(numberText).indexOf(b);
+            c1 = Arrays.asList(letterText).indexOf(a) - 1;
+            r2 = Arrays.asList(numberText).indexOf(d);
+            c2 = Arrays.asList(letterText).indexOf(c) - 1;
+            int[] move = {r1, c1, r2, c2};
+            return move;
+        }
+
+        // Gets the best next move from Stockfish given the previous moves.
+        // Returns move in algebraic notation.
+        public String aiMove(Stockfish sf, String moves) {
+            String move = "";
+            try {
+                sf.write("position startpos moves " + moves);
+                sf.write("go movetime 1000");
+                while (!move.contains("bestmove")) {
+                    move = sf.read();
+                }
+                int index = move.indexOf("bestmove") + "bestmove ".length();
+                move = move.substring(index, index + 4);
+            } catch (Exception ex) {
+                System.err.println("AI failed to produce move.");
+                ex.printStackTrace();
+            }
+            return move;
+        }
     }
 }
