@@ -12,7 +12,22 @@ public class Space {
 		tag = letterText[y] + numberText[x];
 		piece = null;
 	}
+	
+	//New space for testing purposes
+	public Space(int h, int v){
+		x = h;
+		y = v;
+		piece = null;
+		tag = null;
+	}
 
+	//Create space with piece on it for testing
+	public Space (int h, int v, Piece token) {
+		x = h;
+		y = h;
+		tag = null;
+		piece = token;
+	}
 	//Create space with piece on it
 	public Space (int h, int v, Piece token, String[] numberText, String[] letterText) {
 		x = h;
