@@ -1,6 +1,7 @@
 package laboon;
 
 import java.util.*;
+import java.util.Timer;
 import java.text.*;
 import java.io.*;
 import java.awt.*;
@@ -16,7 +17,7 @@ public class Chess {
     private JPanel upperPanel;
     private JPanel middlePanel;
     private JPanel lowerPanel;
-    private JLabel display, title;
+    private JLabel display, title, kibitzer, space;
     private JButton [][] theButtons;
     private JLabel [] numbers;
     private JLabel [] letters;
@@ -106,6 +107,9 @@ public class Chess {
         flipBoard = new JButton("Flip Board"); //Flips the chess board
         title = new JLabel("", JLabel.CENTER);
         display = new JLabel(); //creates a JLabel that will be altered throughout the game telling the user who is up
+        kibitzer = new JLabel(); //creates a JLabel that will handle commentary
+        space = new JLabel();
+        space.setText("               ");
         title.setText("Laboon Chess");
         display.setText("It is " + whitesColorName + "'s turn first");  //tells the user who is up first
 		upperPanel = new JPanel();
@@ -195,6 +199,8 @@ public class Chess {
         lowerPanel.add(saveGame); //adds save game button to the panel
         lowerPanel.add(flipBoard); //adds flip board button to the panel
         lowerPanel.add(display);    //adds the JLabel to the panel
+        lowerPanel.add(space);
+        lowerPanel.add(kibitzer);
         frame.add(upperPanel, BorderLayout.NORTH);
         frame.add(middlePanel, BorderLayout.CENTER);    //adds the one JLabel to the JFrame and puts it in the center of the GUI
         frame.add(lowerPanel, BorderLayout.SOUTH);  //adds the other JLabel to the JFrame and puts it in the southern part of the GUI
@@ -270,6 +276,8 @@ public class Chess {
                 redrawBoard();
 				playerTurn = true;
 				display.setText("It is " + whitesColorName + "'s Turn");  //tells the user who is up first
+                kibitzer.setText("");
+                
             }
 
             else if(e.getSource() == loadGame) //when load game is clicked
@@ -413,6 +421,32 @@ public class Chess {
         // Returns true if successful, otherwise returns false.
         public boolean makeMove(int r1, int c1, int r2, int c2) {
             boolean isSpaceEmpty = board.spaceIsEmpty(r2,c2);
+
+            String[] comments = new String[5];
+            comments[0] = "Go white!";
+            comments[1] = "This chess game has really good value!";
+            comments[2] = "Go black!";
+            comments[3] = "This game is taking forever...";
+            comments[4] = "Who will be in check first?";
+
+            Timer timer = new Timer();
+            Random rand = new Random();
+            Random rand2 = new Random();
+            Thread t = new Thread(() ->
+            {     
+                int randTime = rand2.nextInt(6 - 1) + 1;       
+                timer.schedule(new TimerTask() {
+                    public void run() {
+                        int randInt = rand.nextInt(6 - 1) + 1;
+                        kibitzer.setText(comments[randInt-1]);
+                    }
+                }, randTime*1000, randTime*1000);
+            });
+
+            t.start();
+
+            t.run();
+            // TODO: make sure the piece belongs to the player
             Piece p = board.getSpacePiece(r1, c1);
 			if (p == null) return false;  // if a piece was clicked on
 			//checks whose turn it is
