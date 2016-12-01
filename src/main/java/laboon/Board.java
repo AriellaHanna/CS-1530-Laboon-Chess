@@ -30,6 +30,25 @@ public class Board {
         addWhites();
         addBlacks();
     }
+    
+    //Creates board for testing purproses
+    public Board(){
+    	// initialize spaces on board
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j ++){
+                spaces[i][j] = new Space(i, j);
+            }
+        }
+        //initialize capture pieces as empty
+        for (int i = 0; i < 16; i++)
+        {
+            takenBlack[i] = null;
+            takenWhite[i] = null;
+        }
+        addWhites();
+        addBlacks();
+    }
 
     //Adds all white pieces
     private void addWhites() {
