@@ -27,8 +27,8 @@ public class Rook extends Piece {
 				if (getCol() == 0){
 					board.addToSpace(row, column-2, savedPiece);
 					savedPiece.setCol(column-2);
-					board.addToSpace(row,3, this);
 					setCol(3);
+					board.addToSpace(row,3, this);
 					if (isWhite() && board.whiteCheck()){
 						undo(board, oldRow,oldCol,savedPiece);
 						return false;
@@ -37,22 +37,15 @@ public class Rook extends Piece {
 						undo(board, oldRow,oldCol,savedPiece);
 						return false;
 					}
-					else{
-						hasMoved();
-						return true;
-					}
-			}
-			else if (!isWhite() && board.blackCheck()){
-				undo(board, oldRow,oldCol,savedPiece);
-				return false;
-			}
+					hasMoved();
+					return true;
 				}
 				//Short castle
-				else{
+				else if (getCol() == 7){
 					board.addToSpace(row,column+2, savedPiece);
 					savedPiece.setCol(column+2);
-					board.addToSpace(row,5, this);
 					setCol(5);
+					board.addToSpace(row,5, this);
 					if (isWhite() && board.whiteCheck()){
 						undo(board, oldRow,oldCol,savedPiece);
 						return false;
@@ -61,11 +54,10 @@ public class Rook extends Piece {
 						undo(board, oldRow,oldCol,savedPiece);
 						return false;
 					}
-					else{
-						hasMoved();
-						return true;
-					}
+					hasMoved();
+					return true;
 				}
+			}
 			board.addToSpace(row,column, this); //Move piece to new space
 			setCol(column);
 			setRow(row);

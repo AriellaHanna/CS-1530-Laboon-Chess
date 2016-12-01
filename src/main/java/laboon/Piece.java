@@ -29,6 +29,7 @@ public abstract class Piece {
 		if (piece != null){
 			//Undo a castle
 			if (piece.getSymbol().equals("K")){
+				board.removeFromSpace(piece.getRow(),piece.getCol(),false);
 				piece.setCol(4);
 				board.addToSpace(piece.getRow(),piece.getCol(), piece);
 			}
