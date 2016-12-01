@@ -421,6 +421,9 @@ public class Chess {
         // Returns true if successful, otherwise returns false.
         public boolean makeMove(int r1, int c1, int r2, int c2) {
             boolean isSpaceEmpty = board.spaceIsEmpty(r2,c2);
+            boolean spaceColor = false;
+            if (!isSpaceEmpty)
+            	spaceColor = board.getSpaceColor(r2,c2);
 
             String[] comments = new String[5];
             comments[0] = "Go white!";
@@ -452,11 +455,8 @@ public class Chess {
 			//checks whose turn it is
 			if((playerTurn && p.isWhite()) || (!playerTurn && !p.isWhite())){
 				if (p.move(board, r2, c2)) {   // if the move is valid
-					boolean capture = !isSpaceEmpty;
+					boolean capture = !isSpaceEmpty && spaceColor != p.isWhite();
 					System.out.println(capture);
-					board.removeFromSpace(r2, c2, capture);
-					board.removeFromSpace(r1, c1, false);
-					board.addToSpace(r2, c2, p);
 					addMoveToList(p, c2, r2, capture, r1, c1);
 					playerTurn = !playerTurn;
 					return true;
