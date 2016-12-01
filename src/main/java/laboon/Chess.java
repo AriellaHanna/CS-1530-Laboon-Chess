@@ -381,7 +381,7 @@ public class Chess {
                                         makeMove(rcMove[0], rcMove[1], rcMove[2], rcMove[3]);
                                     }
                                 }
-
+								System.out.println(moves);
                                 redrawBoard();
                                 pieceSelected = false;
                             }
@@ -441,7 +441,9 @@ public class Chess {
         // loads and parses the PGN file
         public void loadPGN(File file){
             try{
+				aiEnabled = false;
 				board = new Board(numberText, letterText);
+				moves = "";
 				turnNumber = 1;
 				player1Moves = new String[30];
 				player2Moves = new String[30];
@@ -460,29 +462,31 @@ public class Chess {
                 //pattern used to find chess piece movements in PGN file
                 String pattern  = "((O-O-O)|(O-O)|[abcdefghNxBQORK]+[12345678])+[\\+]?";
                 Pattern p = Pattern.compile(pattern);
-				ArrayList<String> moves = new ArrayList<String>();
+				ArrayList<String> moveList = new ArrayList<String>();
 
                 //Searches the file for pattern
                 while(inFile.hasNext()){
                     String line = inFile.nextLine();
                     Matcher m = p.matcher(line);
                     while(m.find()){
-						moves.add(m.group());
+						moveList.add(m.group());
 						System.out.println(m.group());
                     }
                 }
 
 				//goes through all moves found and loads the corresponding pieces
-				for(int i = 0; i < moves.size(); i++){
+				for(int i = 0; i < moveList.size(); i++){
 					if((i%2) == 0){
-						loadsPieces(moves, i, true);
+						loadsPieces(moveList, i, true);
 					}
 					else{
-						loadsPieces(moves, i, false);
+						loadsPieces(moveList, i, false);
 					}
 				}
                 inFile.close();
 				redrawBoard();
+				System.out.println(moves);
+				aiEnabled = true;
             }
             catch(FileNotFoundException ex) {
                 System.out.println("Unable to open file");
@@ -542,46 +546,45 @@ public class Chess {
 		/*
 		* based on the first character of the move determine which piece is to be loaded
 		* 	params:
-		*	ArrayList<String> moves: the list of moves parsed from load file
+		*	ArrayList<String> moveList: the list of moveList parsed from load file
 		* 	int i: index of which move is being loaded
 		* 	boolean white: which color is being loaded
 		*/
-		public void loadsPieces(ArrayList<String> moves, int i, boolean white){
-			if(moves.get(i).charAt(0) == 'a' || moves.get(i).charAt(0) == 'b' || moves.get(i).charAt(0) == 'c' ||
-				moves.get(i).charAt(0) == 'd' || moves.get(i).charAt(0) == 'e' || moves.get(i).charAt(0) == 'f' ||
-				moves.get(i).charAt(0) == 'g' || moves.get(i).charAt(0) == 'h'){
-				loadPawn(moves.get(i),white);
+		public void loadsPieces(ArrayList<String> moveList, int i, boolean white){
+			if(moveList.get(i).charAt(0) == 'a' || moveList.get(i).charAt(0) == 'b' || moveList.get(i).charAt(0) == 'c' ||
+				moveList.get(i).charAt(0) == 'd' || moveList.get(i).charAt(0) == 'e' || moveList.get(i).charAt(0) == 'f' ||
+				moveList.get(i).charAt(0) == 'g' || moveList.get(i).charAt(0) == 'h'){
+				loadPawn(moveList.get(i),white);
 			}
-			else if(moves.get(i).charAt(0) == 'N'){
-				loadKnight(moves.get(i), white);
+			else if(moveList.get(i).charAt(0) == 'N'){
+				loadKnight(moveList.get(i), white);
 			}
-			else if(moves.get(i).charAt(0) == 'B'){
-				loadBishop(moves.get(i),white);
+			else if(moveList.get(i).charAt(0) == 'B'){
+				loadBishop(moveList.get(i),white);
 			}
-			else if(moves.get(i).charAt(0) == 'Q'){
-				loadQueen(moves.get(i),white);
+			else if(moveList.get(i).charAt(0) == 'Q'){
+				loadQueen(moveList.get(i),white);
 			}
-			else if(moves.get(i).charAt(0) == 'R'){
-				loadRook(moves.get(i),white);
+			else if(moveList.get(i).charAt(0) == 'R'){
+				loadRook(moveList.get(i),white);
 			}
-			else if(moves.get(i).equals("O-O")){
+			else if(moveList.get(i).equals("O-O")){
 				loadKingsideCastling(white);
 			}
-			else if(moves.get(i).equals("O-O-O")){
+			else if(moveList.get(i).equals("O-O-O")){
 				loadQueensideCastling(white);
 			}
-			else if(moves.get(i).charAt(0) == 'K'){
-				loadKing(moves.get(i),white);
+			else if(moveList.get(i).charAt(0) == 'K'){
+				loadKing(moveList.get(i),white);
 			}
 
 			if(playerTurn){
-				player1Moves[turnNumber-1] = moves.get(i);
+				player1Moves[turnNumber-1] = moveList.get(i);
 			}
 			else{
-				player2Moves[turnNumber-1] = moves.get(i);
+				player2Moves[turnNumber-1] = moveList.get(i);
 				turnNumber++;
 			}
-
 			playerTurn = !playerTurn;
 
 		}
@@ -595,7 +598,7 @@ public class Chess {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 Date date = new Date();
                 String d = "[Date \""+dateFormat.format(date)+"\"]";
-                String round = "1";
+                String round = "[Round : 1]";
 				String white = "[" + whitesColorName + " \"Player\"]";
                 String black = "[" + blacksColorName + " \"Computer\"]";
 				String result = "[Result]";
@@ -709,20 +712,26 @@ public class Chess {
 		*	int y: the parsed column
 		*/
 		public void loadWhitePawn(int x, int y){
-			board.addToSpace(8-x,y,new Pawn(true,8-x,y));
 			if(board.getSpacePiece(9-x,y) == null){
 				if(board.getSpacePiece(10-x,y) != null && board.getSpacePiece(10-x,y).isWhite()){
-					if(board.getSpacePiece(10-x,y).getSymbol().equals("P"))
+					if(board.getSpacePiece(10-x,y).getSymbol().equals("P")){
 						board.removeFromSpace(10-x,y,false);
+						moves += " " + letterText[y+1] + numberText[10-x];
+					}
 				}
 			}
 			else{
 				if(board.getSpacePiece(9-x,y).isWhite()){
-					if(board.getSpacePiece(9-x,y).getSymbol().equals("P"))
+					if(board.getSpacePiece(9-x,y).getSymbol().equals("P")){
 						board.removeFromSpace(9-x,y,false);
+						moves += " " + letterText[y+1] + numberText[9-x];
+					}
 				}
 			}
+			board.addToSpace(8-x,y,new Pawn(true,8-x,y));
+			moves += letterText[y+1] + numberText[8-x];
 		}
+			
 
 		/*
 		* adds the black pawn to the board and then removes the same pawn from its previous location
@@ -731,19 +740,24 @@ public class Chess {
 		*	int y: the parsed column
 		*/
 		public void loadBlackPawn(int x, int y){
-			board.addToSpace(8-x,y,new Pawn(false,8-x,y));
 			if(board.getSpacePiece(7-x,y) == null){
 				if(board.getSpacePiece(6-x,y) != null && !board.getSpacePiece(6-x,y).isWhite()){
-					if(board.getSpacePiece(6-x,y).getSymbol().equals("P"))
+					if(board.getSpacePiece(6-x,y).getSymbol().equals("P")){
 						board.removeFromSpace(6-x,y,false);
+						moves += " " + letterText[y+1] + numberText[6-x];
+					}
 				}
 			}
 			else{
 				if(!board.getSpacePiece(7-x,y).isWhite()){
-					if(board.getSpacePiece(7-x,y).getSymbol().equals("P"))
+					if(board.getSpacePiece(7-x,y).getSymbol().equals("P")){
 						board.removeFromSpace(7-x,y,false);
+						moves += " " + letterText[y+1] + numberText[7-x];
+					}
 				}
 			}
+			board.addToSpace(8-x,y,new Pawn(false,8-x,y));
+			moves += letterText[y+1] + numberText[8-x];
 		}
 
 		/*
@@ -762,12 +776,14 @@ public class Chess {
 			int x = Character.getNumericValue(move.charAt(3));
 			board.removeFromSpace(8-x,y2,true);
 			if(white){
-				board.addToSpace(8-x,y2,new Pawn(true,8-x,y2));
 				board.removeFromSpace(9-x,y,false);
+				board.addToSpace(8-x,y2,new Pawn(true,8-x,y2));
+				moves += " " + letterText[y+1] + numberText[9-x]+letterText[y2+1]+numberText[8-x];
 			}
 			else{
-				board.addToSpace(8-x,y2,new Pawn(false,8-x,y2));
 				board.removeFromSpace(7-x,y,false);
+				board.addToSpace(8-x,y2,new Pawn(false,8-x,y2));
+				moves += " " + letterText[y+1] + numberText[9-x]+letterText[y2+1]+numberText[8-x];
 			}
 		}
 
@@ -789,6 +805,7 @@ public class Chess {
 				int x = Character.getNumericValue(move.charAt(2));
 				findAndRemoveKnight(white, x, y);
 				board.addToSpace(8-x,y,new Knight(white,8-x,y));
+				moves += letterText[y+1] + numberText[8-x];
 			}
 			else{
 				int y = 0;
@@ -800,6 +817,7 @@ public class Chess {
 				int x = Character.getNumericValue(move.charAt(3));
 				findAndRemoveKnight(white, x, y);
 				board.addToSpace(8-x,y,new Knight(white,8-x,y));
+				moves += letterText[y+1] + numberText[8-x];
 			}
 		}
 
@@ -812,36 +830,52 @@ public class Chess {
 		*/
 		public void findAndRemoveKnight(boolean white, int x, int y){
 			if(board.getSpacePiece((8-x)+1,y-2) != null){
-				if(board.getSpacePiece((8-x)+1,y-2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+1,y-2).isWhite() == white)
-						board.removeFromSpace((8-x)+1,y-2,false);
+				if(board.getSpacePiece((8-x)+1,y-2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+1,y-2).isWhite() == white){
+					board.removeFromSpace((8-x)+1,y-2,false);
+					moves += " " + letterText[y-2+1] + numberText[8-x+1];
+				}						
 			}
 			if(board.getSpacePiece((8-x)-1,y-2) != null){
-				if(board.getSpacePiece((8-x)-1,y-2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-1,y-2).isWhite() == white)
+				if(board.getSpacePiece((8-x)-1,y-2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-1,y-2).isWhite() == white){
 					board.removeFromSpace((8-x)-1,y-2,false);
+					moves += " " + letterText[y-2+1] + numberText[8-x-1];
+				}
 			}
 			if(board.getSpacePiece((8-x)-1,y+2) != null){
-				if(board.getSpacePiece((8-x)-1,y+2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-1,y+2).isWhite() == white)
+				if(board.getSpacePiece((8-x)-1,y+2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-1,y+2).isWhite() == white){
 					board.removeFromSpace((8-x)-1,y+2,false);
+					moves += " " + letterText[y+2+1] + numberText[8-x-1];
+				}
 			}
 			if(board.getSpacePiece((8-x)+1,y+2) != null){
-				if(board.getSpacePiece((8-x)+1,y+2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+1,y+2).isWhite() == white)
+				if(board.getSpacePiece((8-x)+1,y+2).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+1,y+2).isWhite() == white){
 					board.removeFromSpace((8-x)+1,y+2,false);
+					moves += " " + letterText[y+2+1] + numberText[8-x+1];
+				}
 			}
 			if(board.getSpacePiece((8-x)+2,y+1) != null){
-				if(board.getSpacePiece((8-x)+2,y+1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+2,y+1).isWhite() == white)
+				if(board.getSpacePiece((8-x)+2,y+1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+2,y+1).isWhite() == white){
 					board.removeFromSpace((8-x)+2,y+1,false);
+					moves += " " + letterText[y+1+1] + numberText[8-x+2];
+				}
 			}
 			if(board.getSpacePiece((8-x)+2,y-1) != null){
-				if(board.getSpacePiece((8-x)+2,y-1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+2,y-1).isWhite() == white)
+				if(board.getSpacePiece((8-x)+2,y-1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)+2,y-1).isWhite() == white){
 					board.removeFromSpace((8-x)+2,y-1,false);
+					moves += " " + letterText[y-1+1] + numberText[8-x+2];
+				}
 			}
 			if(board.getSpacePiece((8-x)-2,y+1) != null){
-				if(board.getSpacePiece((8-x)-2,y+1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-2,y+1).isWhite() == white)
+				if(board.getSpacePiece((8-x)-2,y+1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-2,y+1).isWhite() == white){
 					board.removeFromSpace((8-x)-2,y+1,false);
+					moves += " " + letterText[y+1+1] + numberText[8-x-2];
+				}
 			}
 			if(board.getSpacePiece((8-x)-2,y-1) != null){
-				if(board.getSpacePiece((8-x)-2,y-1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-2,y-1).isWhite() == white)
+				if(board.getSpacePiece((8-x)-2,y-1).getSymbol().equals("Kn") && board.getSpacePiece((8-x)-2,y-1).isWhite() == white){
 					board.removeFromSpace((8-x)-2,y-1,false);
+					moves += " " + letterText[y-1+1] + numberText[8-x-2];
+				}
 			}
 		}
 
@@ -862,6 +896,7 @@ public class Chess {
 				int x = Character.getNumericValue(move.charAt(2));
 				findAndRemoveBishop(white,x,y);
 				board.addToSpace(8-x,y,new Bishop(white,8-x,y));
+				moves += letterText[y+1] + numberText[8-x];
 			}
 			else{
 				int y = 0;
@@ -872,6 +907,7 @@ public class Chess {
 				int x = Character.getNumericValue(move.charAt(3));
 				findAndRemoveBishop(white, x, y);
 				board.addToSpace(8-x,y,new Bishop(white,8-x,y));
+				moves += letterText[y+1] + numberText[8-x];
 			}
 		}
 
@@ -887,24 +923,28 @@ public class Chess {
 				if(board.getSpacePiece((8-x)+i,y+i) != null){
 					if(board.getSpacePiece((8-x)+i,y+i).getSymbol().equals("B") && board.getSpacePiece((8-x)+i,y+i).isWhite() == white){
 						board.removeFromSpace((8-x)+i,y+i,false);
+						moves += " " + letterText[y+i+1] + numberText[8-x+i];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x)-i,y+i) != null){
 					if(board.getSpacePiece((8-x)-i,y+i).getSymbol().equals("B") && board.getSpacePiece((8-x)-i,y+i).isWhite() == white){
 						board.removeFromSpace((8-x)-i,y+i,false);
+						moves += " " + letterText[y+i+1] + numberText[8-x-i];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x)+i,y-i) != null){
 					if(board.getSpacePiece((8-x)+i,y-i).getSymbol().equals("B") && board.getSpacePiece((8-x)+i,y-i).isWhite() == white){
 						board.removeFromSpace((8-x)+i,y-i,false);
+						moves += " " + letterText[y-i+1] + numberText[8-x+i];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x)-i,y-i) != null){
 					if(board.getSpacePiece((8-x)-i,y-i).getSymbol().equals("B") && board.getSpacePiece((8-x)-i,y-i).isWhite() == white){
 						board.removeFromSpace((8-x)-i,y-i,false);
+						moves += " " + letterText[y-i+1] + numberText[8-x-i];
 						break;
 					}
 				}
@@ -928,6 +968,7 @@ public class Chess {
 				int x = Character.getNumericValue(move.charAt(2));
 				findAndRemoveQueen(white, x, y);
 				board.addToSpace(8-x,y,new Queen(white, 8-x,y));
+				moves += letterText[y+1] + numberText[8-x];
 			}
 			else{
 				int y = 0;
@@ -938,6 +979,7 @@ public class Chess {
 				int x = Character.getNumericValue(move.charAt(3));
 				findAndRemoveQueen(white, x, y);
 				board.addToSpace(8-x,y,new Queen(white, 8-x,y));
+				moves += letterText[y+1] + numberText[8-x];
 			}
 		}
 
@@ -953,48 +995,56 @@ public class Chess {
 				if(board.getSpacePiece((8-x)+i,y+i) != null){
 					if(board.getSpacePiece((8-x)+i,y+i).getSymbol().equals("Q") && board.getSpacePiece((8-x)+i,y+i).isWhite() == white){
 						board.removeFromSpace((8-x)+i,y+i,false);
+						moves += " " + letterText[y+i+1] + numberText[8-x+i];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x)-i,y+i) != null){
 					if(board.getSpacePiece((8-x)-i,y+i).getSymbol().equals("Q") && board.getSpacePiece((8-x)-i,y+i).isWhite() == white){
 						board.removeFromSpace((8-x)-i,y+i,false);
+						moves += " " + letterText[y+i+1] + numberText[8-x-i];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x)+i,y-i) != null){
 					if(board.getSpacePiece((8-x)+i,y-i).getSymbol().equals("Q") && board.getSpacePiece((8-x)+i,y-i).isWhite() == white){
 						board.removeFromSpace((8-x)+i,y-i,false);
+						moves += " " + letterText[y-i+1] + numberText[8-x+i];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x)-i,y-i) != null){
 					if(board.getSpacePiece((8-x)-i,y-i).getSymbol().equals("Q") && board.getSpacePiece((8-x)-i,y-i).isWhite() == white){
 						board.removeFromSpace((8-x)-i,y-i,false);
+						moves += " " + letterText[y-i+1] + numberText[8-x-i];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x)-i,y) != null){
 					if(board.getSpacePiece((8-x)-i,y).getSymbol().equals("Q") && board.getSpacePiece((8-x)-i,y).isWhite() == white){
 						board.removeFromSpace((8-x)-i,y,false);
+						moves += " " + letterText[y+1] + numberText[8-x-i];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x)+i,y) != null){
 					if(board.getSpacePiece((8-x)+i,y).getSymbol().equals("Q") && board.getSpacePiece((8-x)+i,y).isWhite() == white){
 						board.removeFromSpace((8-x)+i,y,false);
+						moves += " " + letterText[y+1] + numberText[8-x+i];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x),y+i) != null){
 					if(board.getSpacePiece((8-x),y+i).getSymbol().equals("Q") && board.getSpacePiece((8-x),y+i).isWhite() == white){
 						board.removeFromSpace((8-x),y+i,false);
+						moves += " " + letterText[y+i+1] + numberText[8-x];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x),y-i) != null){
 					if(board.getSpacePiece((8-x),y-i).getSymbol().equals("Q") && board.getSpacePiece((8-x),y-i).isWhite() == white){
 						board.removeFromSpace((8-x),y-i,false);
+						moves += " " + letterText[y-i+1] + numberText[8-x];
 						break;
 					}
 				}
@@ -1018,6 +1068,7 @@ public class Chess {
 				int x = Character.getNumericValue(move.charAt(2)); //new row
 				findAndRemoveRook(white, x, y);
 				board.addToSpace(8-x,y,new Rook(white,8-x,y));
+				moves += letterText[y+1] + numberText[8-x];
 			}
 			else{
 				//if previous row is also given
@@ -1039,6 +1090,7 @@ public class Chess {
 					int x = Character.getNumericValue(move.charAt(3));
 					findAndRemoveRook(white, x, y);
 					board.addToSpace(8-x,y,new Rook(white,8-x,y));
+					moves += letterText[y+1] + numberText[8-x];
 				}
 			}
 		}
@@ -1059,8 +1111,10 @@ public class Chess {
 			int x = Character.getNumericValue(move.charAt(3)); //new row
 			if(board.getSpacePiece(8-x,y1).getSymbol().equals("R")){
 				board.removeFromSpace(8-x,y1,false);
+				moves += " "+letterText[y1+1] + numberText[8-x];
 			}
 			board.addToSpace(8-x,y2,new Rook(white,8-x,y2));
+			moves += letterText[y2+1] + numberText[8-x];
 		}
 
 		//searches the previous ow for the rook and removes it from the board
@@ -1085,7 +1139,9 @@ public class Chess {
 			}
 			if(board.getSpacePiece(8-x1,y).getSymbol().equals("R")){
 				board.removeFromSpace(8-x1,y,false);
+				moves += " "+letterText[y+1] + numberText[8-x1];
 			}
+			moves += letterText[y+1] + numberText[8-x2];
 		}
 
 		/*
@@ -1100,24 +1156,28 @@ public class Chess {
 				if(board.getSpacePiece((8-x)-i,y) != null){
 					if(board.getSpacePiece((8-x)-i,y).getSymbol().equals("R") && board.getSpacePiece((8-x)-i,y).isWhite() == white){
 						board.removeFromSpace((8-x)-i,y,false);
+						moves += " "+letterText[y+1] + numberText[8-x-i];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x)+i,y) != null){
 					if(board.getSpacePiece((8-x)+i,y).getSymbol().equals("R") && board.getSpacePiece((8-x)+i,y).isWhite() == white){
 						board.removeFromSpace((8-x)+i,y,false);
+						moves += " "+letterText[y+1] + numberText[8-x+i];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x),y+i) != null){
 					if(board.getSpacePiece((8-x),y+i).getSymbol().equals("R") && board.getSpacePiece((8-x),y+i).isWhite() == white){
 						board.removeFromSpace((8-x),y+i,false);
+						moves += " "+letterText[y+i+1] + numberText[8-x];
 						break;
 					}
 				}
 				if(board.getSpacePiece((8-x),y-i) != null){
 					if(board.getSpacePiece((8-x),y-i).getSymbol().equals("R") && board.getSpacePiece((8-x),y-i).isWhite() == white){
 						board.removeFromSpace((8-x),y-i,false);
+						moves += " "+letterText[y-i+1] + numberText[8-x];
 						break;
 					}
 				}
@@ -1193,6 +1253,7 @@ public class Chess {
 				int row = k.getRow();
 				int col = k.getCol();
 				board.removeFromSpace(row,col,false);
+				moves += " "+letterText[col+1] + numberText[row];
 				addKing(move, white, k);
 			}
 			else{
@@ -1200,6 +1261,7 @@ public class Chess {
 				int row = k.getRow();
 				int col = k.getCol();
 				board.removeFromSpace(row,col,false);
+				moves += " "+letterText[col+1] + numberText[row];
 				addKing(move, white, k);
 			}
 		}
@@ -1218,6 +1280,7 @@ public class Chess {
 				}
 				int x = Character.getNumericValue(move.charAt(2)); //new row
 				board.addToSpace(8-x,y,k);
+				moves += letterText[y+1] + numberText[8-x];
 				k.setRow(8-x);
 				k.setCol(y);
 			}
@@ -1229,6 +1292,7 @@ public class Chess {
 				}
 				int x = Character.getNumericValue(move.charAt(3)); // new row
 				board.addToSpace(8-x,y,k);
+				moves += letterText[y+1] + numberText[8-x];
 				k.setRow(8-x);
 				k.setCol(y);
 			}
