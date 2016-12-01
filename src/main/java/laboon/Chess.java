@@ -452,13 +452,8 @@ public class Chess {
 			//checks whose turn it is
 			if((playerTurn && p.isWhite()) || (!playerTurn && !p.isWhite())){
 				if (p.move(board, r2, c2)) {   // if the move is valid
-					boolean capture = !isSpaceEmpty;
-					System.out.println(capture);
-					board.removeFromSpace(r2, c2, capture);
-					board.removeFromSpace(r1, c1, false);
-					board.addToSpace(r2, c2, p);
-					addMoveToList(p, c2, r2, capture);
-					playerTurn = !playerTurn;
+					addMoveToList(p, p.getCol(), p.getRow());
+					playerTurn = !playerTurn;					
 					return true;
 				}
 				else{

@@ -6,6 +6,7 @@ public abstract class Piece {
 	private int c; //Column piece is in
 	private final int originC; //Orignal column position
 	private final int originR; //Orignal row position
+	private boolean hasMoved; //Whether or not piece has moved
 	protected String symbol; // Letter representing the piece on the board
 
 	//Constructor
@@ -15,6 +16,7 @@ public abstract class Piece {
 		c = column;
 		originC = column;
 		originR = row;
+		hasMoved = false;
 	}
 
 	// Move the piece, return true if completed, false if illegal
@@ -24,10 +26,17 @@ public abstract class Piece {
 	public void undo(Board board, int r, int c, Piece piece){
 		board.removeFromSpace(getRow(),getCol(),false);
 		board.addToSpace(r,c,this);
-		setRow(r);
-		setRow(c);
-		if (piece != null)
-			board.addToSpace(piece.getRow(), piece.getCol(), piece);
+		if (piece != null){
+			//Undo a castle
+			if (piece.getSymbol().equals("K")){
+				board.removeFromSpace(piece.getRow(),piece.getCol(),false);
+				piece.setCol(4);
+				board.addToSpace(piece.getRow(),piece.getCol(), piece);
+			}
+			else{
+				board.addToSpace(piece.getRow(), piece.getCol(), piece);
+			}
+		}
 	}
 	// Getter for the row
 	public int getRow() {
@@ -67,5 +76,14 @@ public abstract class Piece {
 	//Getter for origin row
 	public int getOriginR(){
 		return originR;
+	}
+	
+	//Mark piece as moved
+	public void setMoved(){
+		hasMoved = true;
+	}
+	//Getter for has moved
+	public boolean hasMoved(){
+		return hasMoved;
 	}
 }
