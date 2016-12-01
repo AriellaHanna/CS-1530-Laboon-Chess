@@ -15,8 +15,8 @@ User Stories
 	As a user, I want an indication of whose turn it is, so that I can see when it is my
 	turn to go.
 5.
-	As a user, I want black to always be on top and white to always be on bottom because
-	that is my preferred way to view the board.
+	As a user, I want to play against a CPU opponent, so that I can practice even when I don't
+	have someone to play with.
 	
 6.
 	As a user, I want gird coordinates on the outlines, so that I can gain familiarity with
