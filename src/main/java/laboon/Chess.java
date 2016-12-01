@@ -457,7 +457,7 @@ public class Chess {
 					board.removeFromSpace(r2, c2, capture);
 					board.removeFromSpace(r1, c1, false);
 					board.addToSpace(r2, c2, p);
-					addMoveToList(p, c2, r2, capture);
+					addMoveToList(p, c2, r2, capture, r1, c1);
 					playerTurn = !playerTurn;
 					return true;
 				}
@@ -680,7 +680,7 @@ public class Chess {
 			int r2:				destination row
 			boolean capture: 	if a piece was captured.
 		*/
-		public void addMoveToList(Piece p, int c2, int r2, boolean capture){
+		public void addMoveToList(Piece p, int c2, int r2, boolean capture, int r1, int c1){
 			//Composes move based on PGN notation
 			if(p.getSymbol().equals("Kn")) move = "N";
 			else if(p.getSymbol().equals("P")) move = "";
@@ -688,6 +688,17 @@ public class Chess {
 			//if a piece is captured during move
 			if(capture){
 				move = move + "x" + letters[c2+1].getText().toLowerCase() + numbers[r2].getText();
+			}
+			else if(move.equals("R")){
+				if(r1 == r2){
+					move = move + letters[c1+1].getText().toLowerCase() + letters[c2+1].getText().toLowerCase() + numbers[r2].getText();
+				}
+				else if(c1 == c2){
+					move = move + numbers[r1].getText() + letters[c2+1].getText().toLowerCase() + numbers[r2].getText();
+				}
+				else{
+					move = move + letters[c2+1].getText().toLowerCase() + numbers[r2].getText();
+				}
 			}
 			else{
 				move = move + letters[c2+1].getText().toLowerCase() + numbers[r2].getText();
